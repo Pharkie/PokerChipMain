@@ -1,6 +1,7 @@
 #include "encoder_input.hpp"
 
 #include <esp_log.h>
+#include "tasks/small_blind_screen.hpp"
 
 namespace encoder_input
 {
@@ -48,5 +49,15 @@ lv_group_t *group()
 {
     return s_group;
 }
+}
+
+extern "C" void encoder_notify_diff(int diff)
+{
+    if (diff == 0)
+    {
+        return;
+    }
+    ESP_LOGI("encoder_input", "raw diff=%d", diff);
+    screens::small_blind::handle_encoder_delta(diff);
 }
 
