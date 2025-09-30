@@ -133,6 +133,9 @@ void ui_init()
     lv_obj_set_pos(g_handles.focus_proxy, 0, 0);
     lv_obj_set_style_bg_opa(g_handles.focus_proxy, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(g_handles.focus_proxy, 0, LV_PART_MAIN);
+#ifdef LV_OBJ_FLAG_FOCUSABLE
+    lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_FOCUSABLE);
+#endif
     lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
 

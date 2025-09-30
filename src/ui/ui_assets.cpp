@@ -12,8 +12,6 @@ void init()
 bool apply_boot_logo(lv_obj_t *obj)
 {
     LV_UNUSED(obj);
-    // TODO: Load /flash/res/img/riccy.jpeg from the asset pack if provided.
     return false;
 }
 }
-

@@ -13,9 +13,12 @@
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
 
-inline void m5dial_lvgl_init()
+inline void m5dial_lvgl_init(bool call_m5_begin = true)
 {
-    M5.begin();
+    if (call_m5_begin)
+    {
+        M5.begin();
+    }
     lv_init();
     lv_port_disp_init();
     lv_port_indev_init();
