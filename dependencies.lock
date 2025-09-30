@@ -1,0 +1,31 @@
+dependencies:
+  lvgl/lvgl:
+    component_hash: 31862cbc89ac00b4e1a9e208c8fb0a9d3502100a8a22280d20041fc4cd23237c
+    source:
+      git: https://github.com/lvgl/lvgl
+      path: .
+      type: git
+    version: 931f1b0d96ea1797afe08c5c98d3d2535591728e
+  m5dial_lvgl:
+    component_hash: null
+    source:
+      path: /Users/adamknowles/dev/Poker_chip/M5StackDial/PokerChipMain/components/m5dial_lvgl
+      type: local
+    version: 0.1.0
+  m5stack/M5GFX:
+    component_hash: cc2decfef163e03ed1d39166941d0ca301bf05fdda6d083cee5364e2b81c5501
+    source:
+      git: https://github.com/m5stack/M5GFX
+      path: .
+      type: git
+    version: 5342c2b4528260beddc62d5656717e80b8375554
+  m5stack/M5Unified:
+    component_hash: 611f9e5d8a66b951abadd136cbb37996ff3ed2fc43fd7521d4768dc6eeb5896d
+    source:
+      git: https://github.com/m5stack/M5Unified
+      path: .
+      type: git
+    version: 725c654ea1af75e7b80f84723ed612796d40af87
+manifest_hash: 47c356c730e49720abde9af4afbc99d19896ced5b03fe078658b4ddeb3c728cf
+target: esp32s3
+version: 1.0.0

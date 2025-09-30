@@ -1,4 +1,0 @@
-dependencies:
-  m5dial_lvgl:
-    path: ../../../components/m5dial_lvgl
-    override_path: ../../../components/m5dial_lvgl

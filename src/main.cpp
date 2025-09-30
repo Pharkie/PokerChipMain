@@ -8,14 +8,14 @@
 
 #include "M5Dial-LVGL.h"
 
-static const char *TAG = "hello_world";
+static const char *TAG = "poker_chip";
 
-void hello_world(void)
+void render_screen(void)
 {
     lv_obj_set_style_bg_color(lv_screen_active(), lv_color_white(), LV_PART_MAIN);
 
     lv_obj_t *label = lv_label_create(lv_screen_active());
-    lv_label_set_text(label, "Hello Greta");
+    lv_label_set_text(label, "Hello G");
     lv_obj_set_style_text_color(lv_screen_active(), lv_color_black(), LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 }
@@ -23,7 +23,7 @@ void hello_world(void)
 void main_task(void *)
 {
     m5dial_lvgl_init();
-    hello_world();
+    render_screen();
 
     for (;;)
     {
