@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "examples/hello_world"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.pio": true
+    },
+    "C_Cpp.default.configurationProvider": "platformio.platformio-ide"
+  }
+}

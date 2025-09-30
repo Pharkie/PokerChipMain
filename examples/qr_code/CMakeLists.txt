@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 3.16.0)
-
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(qr_code)
-idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=${PROJECT_DIR}/include/lv_conf.h" APPEND)
