@@ -1,0 +1,160 @@
+#include "ui_root.hpp"
+
+#include <lvgl.h>
+
+#include "ui_assets.hpp"
+
+namespace ui
+{
+namespace
+{
+Handles g_handles;
+
+void apply_label_style(lv_obj_t *label, lv_color_t color, const lv_font_t *font)
+{
+    lv_obj_set_style_text_color(label, color, LV_PART_MAIN);
+    if (font != nullptr)
+    {
+        lv_obj_set_style_text_font(label, font, LV_PART_MAIN);
+    }
+}
+
+void hide(lv_obj_t *obj, bool should_hide)
+{
+    if (!obj)
+    {
+        return;
+    }
+    if (should_hide)
+    {
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+    }
+    else
+    {
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+} // namespace
+
+void ui_init()
+{
+    lv_disp_t *disp = lv_disp_get_default();
+    g_handles.screen = lv_obj_create(nullptr);
+    lv_obj_remove_style_all(g_handles.screen);
+    if (disp != nullptr)
+    {
+        lv_obj_set_size(g_handles.screen, lv_disp_get_hor_res(disp), lv_disp_get_ver_res(disp));
+    }
+    else
+    {
+        lv_obj_set_size(g_handles.screen, 240, 240);
+    }
+    lv_obj_set_style_bg_color(g_handles.screen, lv_color_black(), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(g_handles.screen, LV_OPA_COVER, LV_PART_MAIN);
+    lv_screen_load(g_handles.screen);
+
+    // Placeholder for /flash/res/img/riccy.jpeg (UIFlow2Micropython.py:L154)
+    g_handles.logo = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.logo, "LOGO");
+    lv_obj_set_style_text_color(g_handles.logo, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_set_pos(g_handles.logo, 10, 10);
+    ui::assets::apply_boot_logo(g_handles.logo);
+
+    g_handles.big_number = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.big_number, "0");
+    apply_label_style(g_handles.big_number, lv_color_hex(0xFF00DC), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.big_number, 79, 100);
+
+    g_handles.page_title = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.page_title, "");
+    apply_label_style(g_handles.page_title, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.page_title, 20, 62);
+
+    g_handles.pushtext_bg = lv_obj_create(g_handles.screen);
+    lv_obj_clear_flag(g_handles.pushtext_bg, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_size(g_handles.pushtext_bg, 251, 62);
+    lv_obj_set_pos(g_handles.pushtext_bg, -3, 190);
+    lv_obj_set_style_bg_color(g_handles.pushtext_bg, lv_color_hex(0xDF7B0F), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(g_handles.pushtext_bg, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_border_width(g_handles.pushtext_bg, 0, LV_PART_MAIN);
+
+    g_handles.push_text = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.push_text, "Push");
+    apply_label_style(g_handles.push_text, lv_color_hex(0x000000), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.push_text, 97, 202);
+
+    g_handles.down_arrow = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.down_arrow, LV_SYMBOL_DOWN);
+    apply_label_style(g_handles.down_arrow, lv_color_hex(0x000000), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.down_arrow, 110, 225);
+
+    g_handles.small_blind_active = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.small_blind_active, "0");
+    apply_label_style(g_handles.small_blind_active, lv_color_hex(0x00FF46), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.small_blind_active, 88, 58);
+
+    g_handles.elapsed_mins = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.elapsed_mins, "00");
+    apply_label_style(g_handles.elapsed_mins, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.elapsed_mins, 94, 191);
+
+    g_handles.big_blind_active = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.big_blind_active, "0");
+    apply_label_style(g_handles.big_blind_active, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.big_blind_active, 71, 121);
+
+    g_handles.mins_label = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.mins_label, "mins");
+    apply_label_style(g_handles.mins_label, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.mins_label, 90, 218);
+
+    g_handles.elapsed_secs = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.elapsed_secs, "00");
+    apply_label_style(g_handles.elapsed_secs, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.elapsed_secs, 137, 202);
+
+    g_handles.secs_label = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.secs_label, "secs");
+    apply_label_style(g_handles.secs_label, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.secs_label, 129, 218);
+
+    g_handles.active_small_blind_label = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.active_small_blind_label, "Small blind");
+    apply_label_style(g_handles.active_small_blind_label, lv_color_hex(0x00FF46), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.active_small_blind_label, 5, 82);
+
+    g_handles.active_big_blind_label = lv_label_create(g_handles.screen);
+    lv_label_set_text(g_handles.active_big_blind_label, "Big blind");
+    apply_label_style(g_handles.active_big_blind_label, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
+    lv_obj_set_pos(g_handles.active_big_blind_label, 5, 143);
+
+    g_handles.focus_proxy = lv_button_create(g_handles.screen);
+    lv_obj_set_size(g_handles.focus_proxy, 1, 1);
+    lv_obj_set_pos(g_handles.focus_proxy, 0, 0);
+    lv_obj_set_style_bg_opa(g_handles.focus_proxy, LV_OPA_TRANSP, LV_PART_MAIN);
+    lv_obj_set_style_border_width(g_handles.focus_proxy, 0, LV_PART_MAIN);
+    lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
+
+    hide(g_handles.big_number, true);
+    hide(g_handles.page_title, true);
+    hide(g_handles.pushtext_bg, true);
+    hide(g_handles.push_text, true);
+    hide(g_handles.down_arrow, true);
+    hide(g_handles.small_blind_active, true);
+    hide(g_handles.elapsed_mins, true);
+    hide(g_handles.big_blind_active, true);
+    hide(g_handles.mins_label, true);
+    hide(g_handles.elapsed_secs, true);
+    hide(g_handles.secs_label, true);
+    hide(g_handles.active_small_blind_label, true);
+    hide(g_handles.active_big_blind_label, true);
+}
+
+const Handles &get()
+{
+    return g_handles;
+}
+
+} // namespace ui
+
