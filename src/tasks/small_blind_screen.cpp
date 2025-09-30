@@ -95,6 +95,8 @@ void handle_encoder_delta(int step)
         return;
     }
 
+    ESP_LOGI(kLogTag, "encoder delta=%d", step);
+
     int next = g_state.value + step * kStep;
     bool boundary = false;
 
@@ -114,9 +116,11 @@ void handle_encoder_delta(int step)
         g_state.value = next;
         update_display();
         play_tone(step > 0 ? kToneUp : kToneDown);
+        ESP_LOGI(kLogTag, "small blind -> %d", g_state.value);
     }
     else if (boundary)
     {
+        ESP_LOGI(kLogTag, "boundary tone at %d", next);
         play_tone(kToneBoundary);
     }
 }

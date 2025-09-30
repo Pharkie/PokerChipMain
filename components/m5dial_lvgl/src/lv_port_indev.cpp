@@ -3,7 +3,14 @@
 
 #include "lv_port_indev.h"
 #include <M5Unified.hpp>
+#include <esp_log.h>
 #include "encoder.hpp"
+
+extern "C" void encoder_notify_diff(int diff) __attribute__((weak));
+extern "C" void encoder_notify_diff(int diff)
+{
+    (void)diff;
+}
 
 static void touchpad_init(void);
 static void touchpad_read(lv_indev_t *indev, lv_indev_data_t *data);
@@ -76,6 +83,12 @@ static void encoder_init(void)
 
 static void encoder_read(lv_indev_t *indev_drv, lv_indev_data_t *data)
 {
-    data->enc_diff = encoder.getCount(true);
+    int diff = encoder.getCount(true);
+    data->enc_diff = diff;
     data->state = M5.BtnA.isPressed() ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+    if (diff != 0)
+    {
+        ESP_LOGI("lv_port_indev", "encoder diff=%d", diff);
+        encoder_notify_diff(diff);
+    }
 }

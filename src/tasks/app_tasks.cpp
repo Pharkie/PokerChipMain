@@ -50,7 +50,10 @@ void schedule_second_tone()
 
 void encoder_key_event_cb(lv_event_t *event)
 {
-    switch (lv_event_get_key(event))
+    const uint32_t key = lv_event_get_key(event);
+    ESP_LOGI(kLogTag, "encoder key event: %u", static_cast<unsigned>(key));
+
+    switch (key)
     {
     case LV_KEY_RIGHT:
     case LV_KEY_NEXT:
