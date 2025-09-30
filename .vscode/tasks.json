@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PIO: Generate compile_commands for hello_world",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/examples/hello_world"
+      },
+      "command": "pio",
+      "args": ["run", "-t", "compiledb"],
+      "problemMatcher": []
+    }
+  ]
+}
+

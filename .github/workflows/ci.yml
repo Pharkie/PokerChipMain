@@ -1,0 +1,61 @@
+name: PlatformIO CI
+
+on: [push]
+
+jobs:
+  build-pio:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example:
+          - examples/hello_world
+          - examples/touch_button
+          - examples/dial_number
+          - examples/native_sdl
+          - examples/qr_code
+          - examples/new_font
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Install SDL2
+        if: ${{ matrix.example == 'examples/native_sdl' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+
+      - name: Build PlatformIO examples
+        run: pio run --project-dir ${{ matrix.example }}
+
+  build-idf:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example:
+          - examples/dial_number
+          - examples/qr_code
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ${{ matrix.example }}/build
+            ${{ matrix.example }}/managed_components
+          key: ${{ runner.os }}-idf
+      - uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.1.2
+          target: esp32s3
+          path: ${{ matrix.example }}
