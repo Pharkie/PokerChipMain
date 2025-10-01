@@ -11,6 +11,7 @@
 #define PCNT_LOW_LIMIT -32768
 #define PCNT_HIGH_LIMIT 32767
 
+
 Encoder::Encoder()
 {
     _pcnt_unit = NULL;
@@ -32,8 +33,8 @@ void Encoder::setup(gpio_num_t pin_a, gpio_num_t pin_b)
     pcnt_unit_config_t unit_config = {};
     unit_config.low_limit = PCNT_LOW_LIMIT;
     unit_config.high_limit = PCNT_HIGH_LIMIT;
-    unit_config.intr_priority = 1;
-    unit_config.flags.accum_count = 1;
+    unit_config.intr_priority = 0;
+    unit_config.flags.accum_count = 0;
     ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &_pcnt_unit));
 
     pcnt_glitch_filter_config_t filter_config = {};

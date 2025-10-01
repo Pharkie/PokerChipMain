@@ -29,7 +29,19 @@ void setup()
         ESP_LOGW(TAG, "Failed to draw embedded splash image");
     }
 
-    M5.delay(2000);
+    const uint32_t tone1 = 120;
+    const uint32_t gap = 80;
+    const uint32_t tone2 = 150;
+
+    M5.Speaker.tone(3135.0f, tone1);
+    M5.delay(tone1);
+    M5.delay(gap);
+    M5.Speaker.tone(4186.0f, tone2);
+    const uint32_t elapsed = tone1 + gap + tone2;
+    if (elapsed < 2000)
+    {
+        M5.delay(2000 - elapsed);
+    }
     M5.Display.fillScreen(TFT_BLACK);
 
     m5dial_lvgl_init(false);
