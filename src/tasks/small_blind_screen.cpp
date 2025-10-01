@@ -169,8 +169,7 @@ void show()
 
     update_display();
     lv_obj_set_style_text_align(handles.big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_transform_zoom(handles.big_number, 1024, LV_PART_MAIN);
-    lv_obj_align(handles.big_number, LV_ALIGN_CENTER, 0, -10);
+    lv_obj_align(handles.big_number, LV_ALIGN_CENTER, 0, 0);
     set_visible(handles.big_number, true);
 
     lv_obj_set_width(handles.pushtext_bg, 240);

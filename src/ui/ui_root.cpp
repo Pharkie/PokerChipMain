@@ -62,7 +62,7 @@ void ui_init()
 
     g_handles.big_number = lv_label_create(g_handles.screen);
     lv_label_set_text(g_handles.big_number, "0");
-    apply_label_style(g_handles.big_number, lv_color_hex(0xFF00DC), LV_FONT_DEFAULT);
+    apply_label_style(g_handles.big_number, lv_color_hex(0xFF00DC), &lv_font_montserrat_48);
     lv_obj_set_pos(g_handles.big_number, 79, 100);
 
     g_handles.page_title = lv_label_create(g_handles.screen);
