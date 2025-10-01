@@ -1,0 +1,32 @@
+#pragma once
+
+#include "screen.hpp"
+
+/// Configuration screen for setting minutes between rounds.
+/// Allows selection from 5-45 minutes in steps of 5 using rotary encoder.
+/// Plays sound feedback for value changes and boundary hits.
+class RoundMinutesScreen : public Screen {
+public:
+    /// Get the singleton instance.
+    static RoundMinutesScreen& instance();
+
+    // Screen interface implementation
+    void on_enter() override;
+    void handle_encoder(int diff) override;
+    void handle_button_click() override;
+
+private:
+    RoundMinutesScreen() = default;
+
+    int value_ = 15;
+
+    static constexpr int kStep = 5;
+    static constexpr int kMin = 5;
+    static constexpr int kMax = 45;
+    static constexpr float kToneUp = 3520.0f;        // A7
+    static constexpr float kToneDown = 2793.0f;      // F7
+    static constexpr float kToneBoundary = 1661.0f;  // G#6
+    static constexpr uint32_t kToneDuration = 120;   // milliseconds
+
+    void update_display();
+};

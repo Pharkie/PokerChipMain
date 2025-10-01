@@ -9,6 +9,8 @@ Poker chip timer application for the M5Stack Dial device. Converted from UIFlow 
 - **Display**: 240x240 round LCD with LVGL 9.x
 - **Input**: Rotary encoder + center button
 - **Button A**: GPIO 42 (physical button on device)
+  - **⚠️ IMPORTANT**: M5Unified's `M5.BtnA` Button_Class does NOT work with this device
+  - **Must use direct GPIO polling** via ESP-IDF `gpio_get_level()` API
 - **Audio**: Built-in speaker for sound feedback
 
 ## Architecture Overview
@@ -130,9 +132,11 @@ Available through `ui::get()` in [src/ui/ui_root.hpp](src/ui/ui_root.hpp):
 - `focus_proxy` - LVGL input group target
 
 ## Input System
-- **Encoder events** routed through LVGL input group → `encoder_key_event_cb()` in [src/tasks/app_tasks.cpp:21](src/tasks/app_tasks.cpp#L21)
+- **Encoder events** routed directly to active screen handler via `encoder_notify_diff()`
 - **Button A** polled directly via GPIO in `app_tasks::tick()` (press/release/click detection)
-- Encoder delta mapped to: `LV_KEY_RIGHT/NEXT` (CW) and `LV_KEY_LEFT/PREV` (CCW)
+  - **⚠️ GPIO polling is required**: `M5.BtnA` Button_Class API is non-functional on M5Stack Dial
+  - Uses ESP-IDF `gpio_get_level(GPIO_NUM_42)` with manual debounce logic
+  - Detects press, release, and click events through state tracking
 
 ## Next Development Steps
 
@@ -145,10 +149,12 @@ Available through `ui::get()` in [src/ui/ui_root.hpp](src/ui/ui_root.hpp):
 6. **Sound Cues**: Timer warnings, round transitions
 
 ### Button A Handler
-Currently logs press/release/click events. Needs implementation:
-- Advance from small blind → big blind → duration → start game
+Currently logs press/release/click events via GPIO polling. Needs implementation:
+- Advance from small blind → round minutes → start game
 - Pause/resume timer during active game
-- Return to configuration from game
+- Power off device when pressed during active game (original behavior)
+
+**Note**: Must continue using direct GPIO polling - M5.BtnA API does not work on this hardware.
 
 ## Notes
 - Repository must be kept outside cloud-synced folders (Dropbox, iCloud) to avoid ESP-IDF build issues
@@ -156,6 +162,7 @@ Currently logs press/release/click events. Needs implementation:
 - LVGL 9.x required (earlier versions incompatible)
 - Custom `m5dial_lvgl` component handles display driver and touch/encoder integration
 - Git branch: `main` (no separate main branch configured)
+- **Button A Hardware Limitation**: The M5Stack Dial does not support M5Unified's Button_Class API (`M5.BtnA.wasClicked()`, etc.). Only direct GPIO polling via ESP-IDF works. This is a known hardware/library compatibility issue with the StampS3-based Dial device.
 
 ## License
 Creative Commons Attribution-NonCommercial 4.0 International

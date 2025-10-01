@@ -1,0 +1,114 @@
+#include "round_minutes_screen.hpp"
+
+#include <esp_log.h>
+#include "game_state.hpp"
+#include "screen_manager.hpp"
+#include "game_active_screen.hpp"
+
+namespace {
+constexpr const char* kLogTag = "round_minutes_screen";
+}
+
+RoundMinutesScreen& RoundMinutesScreen::instance() {
+    static RoundMinutesScreen instance;
+    return instance;
+}
+
+void RoundMinutesScreen::on_enter() {
+    ESP_LOGI(kLogTag, "Entering screen");
+
+    // Reset to default value
+    value_ = 15;
+
+    // Hide boot logo
+    set_visible(ui().logo, false);
+
+    // Setup title
+    lv_label_set_text(ui().page_title, "Mins between rounds");
+    lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 40);
+    set_visible(ui().page_title, true);
+
+    // Setup big number display
+    update_display();
+    lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, 0);
+    set_visible(ui().big_number, true);
+
+    // Setup push prompt background
+    lv_obj_set_width(ui().pushtext_bg, 240);
+    lv_obj_set_height(ui().pushtext_bg, 60);
+    lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
+    set_visible(ui().pushtext_bg, true);
+
+    // Setup push text
+    lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
+    set_visible(ui().push_text, true);
+
+    // Setup down arrow
+    lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -4);
+    set_visible(ui().down_arrow, true);
+
+    // Hide game active widgets
+    set_visible(ui().small_blind_active, false);
+    set_visible(ui().big_blind_active, false);
+    set_visible(ui().active_small_blind_label, false);
+    set_visible(ui().active_big_blind_label, false);
+    set_visible(ui().elapsed_mins, false);
+    set_visible(ui().elapsed_secs, false);
+    set_visible(ui().mins_label, false);
+    set_visible(ui().secs_label, false);
+}
+
+void RoundMinutesScreen::handle_encoder(int diff) {
+    if (diff == 0) {
+        return;
+    }
+
+    // Normalize to step delta
+    int step = (diff > 0) ? 1 : -1;
+    int next = value_ + step * kStep;
+    bool boundary = false;
+
+    // Clamp to range
+    if (next < kMin) {
+        next = kMin;
+        boundary = true;
+    }
+    if (next > kMax) {
+        next = kMax;
+        boundary = true;
+    }
+
+    // Update value and play feedback
+    if (next != value_) {
+        value_ = next;
+        update_display();
+        play_tone(step > 0 ? kToneUp : kToneDown, kToneDuration);
+        ESP_LOGI(kLogTag, "Round minutes -> %d", value_);
+    } else if (boundary) {
+        play_tone(kToneBoundary, kToneDuration);
+        ESP_LOGI(kLogTag, "Boundary hit at %d", value_);
+    }
+}
+
+void RoundMinutesScreen::handle_button_click() {
+    ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
+
+    // Save to game state
+    auto& game = GameState::instance();
+    game.round_minutes = value_;
+    game.seconds_remaining = value_ * 60;
+    game.current_round = 1;
+
+    // Play confirmation tone (C8)
+    play_tone(4186.0f, 120);
+
+    // Transition to GameActiveScreen
+    ScreenManager::instance().transition_to(&GameActiveScreen::instance());
+}
+
+void RoundMinutesScreen::update_display() {
+    lv_label_set_text_fmt(ui().big_number, "%d", value_);
+}

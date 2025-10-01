@@ -1,0 +1,113 @@
+#include "small_blind_screen.hpp"
+
+#include <algorithm>
+#include <esp_log.h>
+#include "game_state.hpp"
+#include "screen_manager.hpp"
+#include "round_minutes_screen.hpp"
+
+namespace {
+constexpr const char* kLogTag = "small_blind_screen";
+}
+
+SmallBlindScreen& SmallBlindScreen::instance() {
+    static SmallBlindScreen instance;
+    return instance;
+}
+
+void SmallBlindScreen::on_enter() {
+    ESP_LOGI(kLogTag, "Entering screen");
+
+    // Reset to minimum value
+    value_ = kMin;
+
+    // Hide boot logo
+    set_visible(ui().logo, false);
+
+    // Setup title
+    lv_label_set_text(ui().page_title, "Starting small blinds");
+    lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 40);
+    set_visible(ui().page_title, true);
+
+    // Setup big number display
+    update_display();
+    lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, 0);
+    set_visible(ui().big_number, true);
+
+    // Setup push prompt background
+    lv_obj_set_width(ui().pushtext_bg, 240);
+    lv_obj_set_height(ui().pushtext_bg, 60);
+    lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
+    set_visible(ui().pushtext_bg, true);
+
+    // Setup push text
+    lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
+    set_visible(ui().push_text, true);
+
+    // Setup down arrow
+    lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -4);
+    set_visible(ui().down_arrow, true);
+
+    // Hide game active widgets
+    set_visible(ui().small_blind_active, false);
+    set_visible(ui().big_blind_active, false);
+    set_visible(ui().active_small_blind_label, false);
+    set_visible(ui().active_big_blind_label, false);
+    set_visible(ui().elapsed_mins, false);
+    set_visible(ui().elapsed_secs, false);
+    set_visible(ui().mins_label, false);
+    set_visible(ui().secs_label, false);
+}
+
+void SmallBlindScreen::handle_encoder(int diff) {
+    if (diff == 0) {
+        return;
+    }
+
+    // Normalize to step delta
+    int step = (diff > 0) ? 1 : -1;
+    int next = value_ + step * kStep;
+    bool boundary = false;
+
+    // Clamp to range
+    if (next < kMin) {
+        next = kMin;
+        boundary = true;
+    }
+    if (next > kMax) {
+        next = kMax;
+        boundary = true;
+    }
+
+    // Update value and play feedback
+    if (next != value_) {
+        value_ = next;
+        update_display();
+        play_tone(step > 0 ? kToneUp : kToneDown, kToneDuration);
+        ESP_LOGI(kLogTag, "Small blind -> %d", value_);
+    } else if (boundary) {
+        play_tone(kToneBoundary, kToneDuration);
+        ESP_LOGI(kLogTag, "Boundary hit at %d", value_);
+    }
+}
+
+void SmallBlindScreen::handle_button_click() {
+    ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
+
+    // Save to game state
+    GameState::instance().small_blind = value_;
+    GameState::instance().big_blind = value_ * 2;
+
+    // Play confirmation tone (G7)
+    play_tone(2960.0f, 120);
+
+    // Transition to RoundMinutesScreen
+    ScreenManager::instance().transition_to(&RoundMinutesScreen::instance());
+}
+
+void SmallBlindScreen::update_display() {
+    lv_label_set_text_fmt(ui().big_number, "%d", value_);
+}

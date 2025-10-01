@@ -1,7 +1,7 @@
 #include "encoder_input.hpp"
 
 #include <esp_log.h>
-#include "tasks/small_blind_screen.hpp"
+#include "screens/screen_manager.hpp"
 
 namespace encoder_input
 {
@@ -58,18 +58,6 @@ extern "C" void encoder_notify_diff(int diff)
         return;
     }
 
-    if (screens::small_blind::handle_raw_encoder_diff(diff))
-    {
-        return;
-    }
-
-    lv_group_t *grp = encoder_input::group();
-    if (grp == nullptr)
-    {
-        return;
-    }
-
-    ESP_LOGI("encoder_input", "forward diff=%d", diff);
-    lv_group_set_editing(grp, true);
-    lv_group_send_data(grp, diff);
+    // Route encoder input to the active screen via ScreenManager
+    ScreenManager::instance().handle_encoder(diff);
 }
