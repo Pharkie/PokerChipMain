@@ -22,6 +22,16 @@ struct Handles
     lv_obj_t *active_small_blind_label = nullptr;
     lv_obj_t *active_big_blind_label = nullptr;
     lv_obj_t *focus_proxy = nullptr;
+
+    // Menu system
+    lv_obj_t *menu_button = nullptr;
+    lv_obj_t *menu_overlay = nullptr;
+    lv_obj_t *menu_title = nullptr;
+    lv_obj_t *menu_item_resume = nullptr;
+    lv_obj_t *menu_item_reset = nullptr;
+    lv_obj_t *menu_item_skip = nullptr;
+    lv_obj_t *menu_item_settings = nullptr;
+    lv_obj_t *menu_item_poweroff = nullptr;
 };
 
 void ui_init();

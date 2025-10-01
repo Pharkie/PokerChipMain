@@ -139,6 +139,55 @@ void ui_init()
     lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
 
+    // Menu button (bottom-right corner)
+    g_handles.menu_button = lv_button_create(g_handles.screen);
+    lv_obj_set_size(g_handles.menu_button, 60, 30);
+    lv_obj_align(g_handles.menu_button, LV_ALIGN_BOTTOM_RIGHT, -5, -5);
+    lv_obj_set_style_bg_color(g_handles.menu_button, lv_color_hex(0x444444), LV_PART_MAIN);
+    lv_obj_t *menu_label = lv_label_create(g_handles.menu_button);
+    lv_label_set_text(menu_label, "MENU");
+    lv_obj_center(menu_label);
+
+    // Menu overlay (full screen, initially hidden)
+    g_handles.menu_overlay = lv_obj_create(g_handles.screen);
+    lv_obj_set_size(g_handles.menu_overlay, 240, 240);
+    lv_obj_set_pos(g_handles.menu_overlay, 0, 0);
+    lv_obj_set_style_bg_color(g_handles.menu_overlay, lv_color_black(), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(g_handles.menu_overlay, LV_OPA_90, LV_PART_MAIN);
+    lv_obj_set_style_border_width(g_handles.menu_overlay, 0, LV_PART_MAIN);
+
+    // Menu title
+    g_handles.menu_title = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_title, "PAUSED");
+    apply_label_style(g_handles.menu_title, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_align(g_handles.menu_title, LV_ALIGN_TOP_MID, 0, 20);
+
+    // Menu items
+    g_handles.menu_item_resume = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_item_resume, "> Resume");
+    apply_label_style(g_handles.menu_item_resume, lv_color_hex(0x00FF00), LV_FONT_DEFAULT);
+    lv_obj_align(g_handles.menu_item_resume, LV_ALIGN_CENTER, 0, -40);
+
+    g_handles.menu_item_reset = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_item_reset, "  Reset");
+    apply_label_style(g_handles.menu_item_reset, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_align(g_handles.menu_item_reset, LV_ALIGN_CENTER, 0, -10);
+
+    g_handles.menu_item_skip = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_item_skip, "  Skip Round");
+    apply_label_style(g_handles.menu_item_skip, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_align(g_handles.menu_item_skip, LV_ALIGN_CENTER, 0, 20);
+
+    g_handles.menu_item_settings = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_item_settings, "  Settings");
+    apply_label_style(g_handles.menu_item_settings, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_align(g_handles.menu_item_settings, LV_ALIGN_CENTER, 0, 50);
+
+    g_handles.menu_item_poweroff = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_item_poweroff, "  Power Off");
+    apply_label_style(g_handles.menu_item_poweroff, lv_color_hex(0xFF0000), LV_FONT_DEFAULT);
+    lv_obj_align(g_handles.menu_item_poweroff, LV_ALIGN_CENTER, 0, 80);
+
     hide(g_handles.big_number, true);
     hide(g_handles.page_title, true);
     hide(g_handles.pushtext_bg, true);
@@ -152,6 +201,8 @@ void ui_init()
     hide(g_handles.secs_label, true);
     hide(g_handles.active_small_blind_label, true);
     hide(g_handles.active_big_blind_label, true);
+    hide(g_handles.menu_button, true);
+    hide(g_handles.menu_overlay, true);
 }
 
 const Handles &get()
