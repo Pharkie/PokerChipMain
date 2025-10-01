@@ -3,6 +3,7 @@
 #include <M5Unified.hpp>
 #include <esp_log.h>
 #include <lvgl.h>
+#include <driver/gpio.h>
 
 #include "input/encoder_input.hpp"
 #include "tasks/small_blind_screen.hpp"
@@ -16,37 +17,12 @@ namespace
 constexpr const char *kLogTag = "app_tasks";
 
 constexpr float kBootTone1Freq = 3135.0f; // G7
-constexpr uint32_t kBootTone1Duration = 200;
-constexpr uint32_t kBootTone1Delay = 150;
+constexpr uint32_t kBootTone1Duration = 100;
+constexpr uint32_t kBootTone1Delay = 80;
 constexpr float kBootTone2Freq = 4186.0f; // C8
-constexpr uint32_t kBootTone2Duration = 200;
+constexpr uint32_t kBootTone2Duration = 120;
 
-lv_timer_t *g_second_tone_timer = nullptr;
-
-void second_boot_tone_cb(lv_timer_t *timer)
-{
-    M5.Speaker.tone(kBootTone2Freq, kBootTone2Duration);
-    if (g_second_tone_timer == timer)
-    {
-        g_second_tone_timer = nullptr;
-    }
-    lv_timer_del(timer);
-}
-
-void schedule_second_tone()
-{
-    if (g_second_tone_timer)
-    {
-        lv_timer_del(g_second_tone_timer);
-        g_second_tone_timer = nullptr;
-    }
-
-    g_second_tone_timer = lv_timer_create(second_boot_tone_cb, kBootTone1Duration + kBootTone1Delay, nullptr);
-    if (!g_second_tone_timer)
-    {
-        ESP_LOGW(kLogTag, "Failed to schedule second boot tone");
-    }
-}
+constexpr gpio_num_t kBtnAPin = GPIO_NUM_42;
 
 void encoder_key_event_cb(lv_event_t *event)
 {
@@ -74,11 +50,20 @@ void init()
 {
     ui::assets::init();
 
+    gpio_config_t btn_cfg = {};
+    btn_cfg.pin_bit_mask = 1ULL << kBtnAPin;
+    btn_cfg.mode = GPIO_MODE_INPUT;
+    btn_cfg.pull_up_en = GPIO_PULLUP_ENABLE;
+    btn_cfg.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    btn_cfg.intr_type = GPIO_INTR_DISABLE;
+    gpio_config(&btn_cfg);
+
     const auto &handles = ui::get();
     lv_obj_clear_flag(handles.logo, LV_OBJ_FLAG_HIDDEN);
 
     M5.Speaker.tone(kBootTone1Freq, kBootTone1Duration);
-    schedule_second_tone();
+    M5.delay(kBootTone1Duration + kBootTone1Delay);
+    M5.Speaker.tone(kBootTone2Freq, kBootTone2Duration);
 
     if (handles.focus_proxy)
     {
@@ -95,7 +80,20 @@ void init()
 
 void tick()
 {
-    // No runtime logic yet – focus on the small blind screen interactions only.
+    static bool prev_pressed = false;
+    bool pressed = gpio_get_level(kBtnAPin) == 0;
+
+    if (pressed && !prev_pressed)
+    {
+        ESP_LOGI(kLogTag, "BtnA pressed");
+    }
+    else if (!pressed && prev_pressed)
+    {
+        ESP_LOGI(kLogTag, "BtnA released");
+        ESP_LOGI(kLogTag, "BtnA click");
+    }
+
+    prev_pressed = pressed;
 }
 
 } // namespace app_tasks

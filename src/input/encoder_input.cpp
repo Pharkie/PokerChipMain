@@ -57,7 +57,19 @@ extern "C" void encoder_notify_diff(int diff)
     {
         return;
     }
-    ESP_LOGI("encoder_input", "raw diff=%d", diff);
-    screens::small_blind::handle_encoder_delta(diff);
-}
 
+    if (screens::small_blind::handle_raw_encoder_diff(diff))
+    {
+        return;
+    }
+
+    lv_group_t *grp = encoder_input::group();
+    if (grp == nullptr)
+    {
+        return;
+    }
+
+    ESP_LOGI("encoder_input", "forward diff=%d", diff);
+    lv_group_set_editing(grp, true);
+    lv_group_send_data(grp, diff);
+}
