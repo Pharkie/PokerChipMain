@@ -312,6 +312,7 @@ void GameActiveScreen::execute_menu_action() {
 
         case 1:  // Reset
             ESP_LOGI(kLogTag, "Resetting to small blind screen");
+            GameState::instance().reset();
             ScreenManager::instance().transition_to(&SmallBlindScreen::instance());
             break;
 
