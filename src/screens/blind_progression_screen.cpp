@@ -129,13 +129,15 @@ int BlindProgressionScreen::calculate_estimated_rounds(float multiplier) const {
     const GameState& game = GameState::instance();
     int small_blind = game.small_blind;
 
-    // Simulate blind progression until critical point
-    // Critical: when big blind > 10% of starting stack (conservative estimate)
-    int critical_big_blind = kStartingStack / 10;
+    // Simulate blind progression until endgame
+    // Game typically ends when average stack gets very short relative to blinds
+    // Conservative: when BB reaches ~25% of starting stack (500 chips)
+    // At this point, players are playing push/fold poker
+    int critical_big_blind = kStartingStack / 4;  // 500 for 2000 stack
     int rounds = 0;
     int current_sb = small_blind;
 
-    while (current_sb * 2 < critical_big_blind && rounds < 20) {
+    while (current_sb * 2 < critical_big_blind && rounds < 30) {
         rounds++;
         current_sb = static_cast<int>(current_sb * multiplier);
     }
