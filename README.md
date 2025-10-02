@@ -1,39 +1,62 @@
-# PokerChipMain
+# PokerChip - M5Stack Dial Poker Timer
 
-PlatformIO + ESP-IDF project for the M5Stack Dial using the LVGL helper component.
+Poker timer for M5Stack Dial with rotary encoder control, touch interface, and automatic blind progression.
 
-## Requirements
-- PlatformIO (VS Code extension or CLI)
-- Espressif ESP-IDF toolchain provided by PlatformIO
+## Features
 
-## Versions
-- PlatformIO platform: **espressif32@6.5.0**
-- Bundled ESP-IDF: **5.1.2**
-- LVGL: **9.x** (earlier versions are incompatible)
+- Hardware-accelerated UI (LVGL 9.x on ESP-IDF)
+- OOP screen architecture with reusable screen manager pattern
+- Touch + rotary encoder dual input modes
+- Hardware PCNT encoder (zero CPU overhead)
+- Debounced button input (100ms software debounce, M5.BtnA doesn't work on Dial)
+- Pause menu system (touch or encoder navigation)
+- Automatic blind doubling with configurable round timer
 
-## Build, Flash, Monitor
-From the project root run:
+## Quick Start
 
 ```bash
-pio run
-pio run --target upload
-pio device monitor
+pio run                    # Build
+pio run --target upload    # Flash to M5Stack Dial
+pio device monitor         # Serial monitor (115200 baud)
 ```
 
-You can also use the PlatformIO tasks in VS Code (Build, Upload, Monitor).
+Or use PlatformIO tasks in VS Code (Build, Upload, Monitor).
 
-## Project Layout
-- `platformio.ini` — PlatformIO environment configured for the M5Stack StampS3 board.
-- `src/main.cpp` — application entry point that starts LVGL and renders the UI.
-- `src/idf_component.yml` — declares the local LVGL helper component dependency.
-- `components/m5dial_lvgl/` — LVGL integration layer shared with this project.
+## For M5Stack Dial Developers
 
+**[See docs/](docs/)** for reusable architecture patterns:
 
-## Notes
-- Keep the repository path free of spaces and outside synced-folders to avoid ESP-IDF build issues.
-- Call `m5dial_lvgl_init()` before rendering LVGL widgets and run `m5dial_lvgl_next()` regularly to service the GUI.
+- Why M5Unified is kept despite limitations
+- Hardware abstraction modules (Button, Encoder, Buzzer)
+- What works and what doesn't on the Dial
+- Quick start templates
+
+## Project Structure
+
+```
+src/
+├── hardware/        # Button, Encoder, Buzzer abstraction
+├── screens/         # OOP screen architecture
+├── ui/              # LVGL widgets and assets
+└── main.cpp         # Entry point
+```
+
+See [docs/](docs/) for architecture patterns and development guides.
+
+## Requirements
+
+- PlatformIO (VS Code extension or CLI)
+- ESP-IDF 5.1.2 (via PlatformIO espressif32@6.5.0)
+- M5Stack Dial hardware
+
+## Key Notes
+
+- **M5.BtnA API doesn't work** - Use GPIO polling (see [docs/m5unified-architecture.md](docs/m5unified-architecture.md))
+- **Keep repo outside cloud-synced folders** - Avoid Dropbox/iCloud (ESP-IDF build issues)
+- **No spaces in path** - ESP-IDF requirement
 
 ## License
+
 Project code is released under the [Creative Commons Attribution-NonCommercial 4.0 International](LICENSE) license.
 Commercial use requires separate permission from the project authors.
 Third-party libraries retain their upstream licenses (LVGL MIT, M5Unified MIT, ESP-IDF Apache-2.0, FreeRTOS MIT).

@@ -2,6 +2,7 @@
 
 #include <esp_log.h>
 #include "screens/screen_manager.hpp"
+#include "hardware/encoder.hpp"
 
 namespace encoder_input
 {
@@ -53,11 +54,6 @@ lv_group_t *group()
 
 extern "C" void encoder_notify_diff(int diff)
 {
-    if (diff == 0)
-    {
-        return;
-    }
-
-    // Route encoder input to the active screen via ScreenManager
-    ScreenManager::instance().handle_encoder(diff);
+    // Forward to hardware::Encoder singleton
+    hardware::Encoder::instance().notify_rotation(diff);
 }

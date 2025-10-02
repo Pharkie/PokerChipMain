@@ -18,6 +18,7 @@ struct Handles
     lv_obj_t *big_blind_active = nullptr;
     lv_obj_t *mins_label = nullptr;
     lv_obj_t *elapsed_secs = nullptr;
+    lv_obj_t *timer_colon = nullptr;
     lv_obj_t *secs_label = nullptr;
     lv_obj_t *active_small_blind_label = nullptr;
     lv_obj_t *active_big_blind_label = nullptr;
@@ -26,12 +27,11 @@ struct Handles
     // Menu system
     lv_obj_t *menu_button = nullptr;
     lv_obj_t *menu_overlay = nullptr;
-    lv_obj_t *menu_title = nullptr;
     lv_obj_t *menu_item_resume = nullptr;
     lv_obj_t *menu_item_reset = nullptr;
     lv_obj_t *menu_item_skip = nullptr;
-    lv_obj_t *menu_item_settings = nullptr;
     lv_obj_t *menu_item_poweroff = nullptr;
+    lv_obj_t *menu_paused_note = nullptr;
 };
 
 void ui_init();

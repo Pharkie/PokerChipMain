@@ -5,10 +5,11 @@
 /// Global game state shared across screens.
 /// Implements singleton pattern for easy access.
 struct GameState {
-    // Configuration (set by small blind and round minutes screens)
+    // Configuration (set by setup screens)
     int small_blind = 25;
     int big_blind = 50;
     int round_minutes = 15;
+    float blind_multiplier = 1.5f;  // STANDARD progression (1.25=RELAXED, 1.5=STANDARD, 2.0=TURBO)
 
     // Active game state
     int current_round = 1;

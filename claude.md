@@ -21,48 +21,146 @@ Poker chip timer application for the M5Stack Dial device. Converted from UIFlow 
 - **Graphics**: Hardware-accelerated rendering through M5Unified library
 - **Input**: Encoder mapped to LVGL input group system
 
+## M5Unified & Hardware Abstraction
+
+### M5Unified Role
+M5Unified is kept as a core dependency because it provides:
+- **Display Driver**: M5GFX library for GC9A01 LCD controller (via `M5.Display.*`)
+- **Touch Driver**: FT3267 touchscreen I2C driver (via `M5.Touch.*`)
+- **Speaker/Buzzer**: LEDC PWM tone generation on GPIO3 (via `M5.Speaker.tone()`)
+- **Power Control**: GPIO46 control for power-off (via `M5.Power.powerOff()`)
+
+These components work reliably and are well-tested across the M5Stack ecosystem.
+
+### Why We Keep M5Unified
+**Decision**: Use M5Unified where it works, extend with custom modules where needed.
+
+**Rationale**:
+1. Display and touch drivers are mature, tested, and work perfectly
+2. The `m5dial_lvgl` component already depends on M5Unified for display/touch integration
+3. M5GFX is bundled with M5Unified (not worth extracting separately)
+4. Speaker API (`M5.Speaker.tone()`) provides clean PWM tone generation
+5. Removing M5Unified would require rewriting ~500+ lines of display/touch driver code with high risk of bugs
+
+### Known M5Unified Limitations on M5Stack Dial
+- **Button_Class API does NOT work**: `M5.BtnA.wasClicked()`, `M5.BtnA.isPressed()`, etc. are non-functional
+  - This is a known hardware/library incompatibility with the StampS3-based Dial device
+  - **Must use direct GPIO polling** via ESP-IDF `gpio_get_level(GPIO_NUM_42)`
+- **Encoder API not used**: M5Unified's encoder support is less efficient than direct hardware PCNT
+
+### Hardware Abstraction Layer
+To work around M5Unified limitations and provide cleaner APIs, we built custom hardware modules:
+
+#### [src/hardware/button.hpp](src/hardware/button.hpp) / [.cpp](src/hardware/button.cpp)
+**Purpose**: Debounced button input with short/long press detection
+- Replaces broken `M5.BtnA` Button_Class API
+- Uses direct GPIO polling with 100ms software debounce
+- Configurable long-press threshold (default 2000ms)
+- Callback-based API: `on_short_press()`, `on_long_press()`
+- Fully reusable for any GPIO button
+
+**Usage Example**:
+```cpp
+hardware::Button btnA(GPIO_NUM_42, 100, 2000);
+btnA.on_short_press([]() { /* handle click */ });
+btnA.on_long_press([]() { M5.Power.powerOff(); });
+btnA.update();  // Call from main loop
+```
+
+#### [src/hardware/encoder.hpp](src/hardware/encoder.hpp) / [.cpp](src/hardware/encoder.cpp)
+**Purpose**: Rotary encoder input via hardware PCNT peripheral
+- Uses ESP32-S3's hardware pulse counter (more efficient than M5Unified's implementation)
+- Bridges low-level C callback (`encoder_notify_diff`) to C++ OOP
+- Callback-based API: `on_rotation(delta)`
+- Zero CPU overhead (hardware counting with glitch filter)
+
+**Usage Example**:
+```cpp
+hardware::Encoder::instance().on_rotation([](int delta) {
+    ScreenManager::instance().handle_encoder(delta);
+});
+```
+
+### Architecture Benefits
+✅ **Pragmatic**: Use M5Unified where it works well (display, touch, speaker)
+✅ **Clean APIs**: Hardware abstraction modules provide consistent callback-based interfaces
+✅ **Testable**: Hardware modules can be mocked for unit testing
+✅ **Maintainable**: Clear separation between M5Unified usage and custom extensions
+✅ **Efficient**: Hardware PCNT encoder, debounced button input with minimal CPU usage
+
 ### Code Structure
 ```
 src/
 ├── main.cpp                          # Entry point: setup() and loop()
 ├── app_main_bridge.cpp              # ESP-IDF bridge
+├── hardware/                         # Hardware abstraction modules
+│   ├── button.hpp/cpp                # Debounced GPIO button (replaces M5.BtnA)
+│   └── encoder.hpp/cpp               # PCNT encoder wrapper
+├── screens/                          # OOP screen architecture
+│   ├── screen.hpp/cpp                # Abstract base class
+│   ├── screen_manager.hpp/cpp        # Singleton screen dispatcher
+│   ├── small_blind_screen.hpp/cpp    # Config screen 1
+│   ├── round_minutes_screen.hpp/cpp  # Config screen 2
+│   └── game_active_screen.hpp/cpp    # Active game timer
 ├── ui/
-│   ├── ui_root.cpp                  # Main UI container and widget handles
+│   ├── ui_root.cpp                   # Main UI container and widget handles
 │   ├── ui_root.hpp
-│   ├── ui_assets.cpp                # Asset loading (images, fonts)
+│   ├── ui_assets.cpp                 # Asset loading (images, fonts)
 │   └── ui_assets.hpp
 ├── input/
-│   └── encoder_input.cpp            # Rotary encoder → LVGL integration
+│   └── encoder_input.cpp             # Rotary encoder → LVGL integration
 ├── tasks/
-│   ├── app_tasks.cpp                # Main app coordination and button handling
-│   ├── app_tasks.hpp
-│   ├── small_blind_screen.cpp       # Starting blind configuration screen
-│   └── small_blind_screen.hpp
+│   └── app_tasks.cpp                 # Main app coordination
+├── game_state.hpp/cpp                # Shared game state singleton
 └── images/
-    ├── riccy.png                    # Boot splash image
-    └── riccy_png.S                  # Embedded binary asset
+    ├── riccy.png                     # Boot splash image
+    └── riccy_png.S                   # Embedded binary asset
 ```
 
 ## Current Implementation Status
 
 ### ✅ Completed Features
 - **Boot Sequence**: Splash screen (riccy.png) with dual-tone startup sound (E7→E8, 120ms + 150ms)
+- **Hardware Abstraction Layer**:
+  - Button module with 100ms debouncing and short/long press detection
+  - Encoder module using hardware PCNT peripheral
+  - Speaker/buzzer tones via M5.Speaker.tone() directly
+- **OOP Screen Architecture**:
+  - Abstract Screen base class with lifecycle hooks
+  - ScreenManager singleton for screen transitions
+  - GameState singleton for shared game data
 - **Small Blind Screen**:
   - Rotary encoder adjusts value (25-200 in steps of 25)
   - Sound feedback: A7 (up), F7 (down), G#6 (boundary)
-  - Large centered number display
-  - Title: "Starting small blinds"
-  - Push prompt at bottom
-- **Button A Detection**: GPIO 42 polling in `app_tasks::tick()`
-- **Encoder Input**: LVGL input group integration with key event callbacks
+  - Large 48pt centered number display
+  - Transitions to Round Minutes screen on button press
+- **Round Minutes Screen**:
+  - Rotary encoder adjusts value (5-45 minutes in steps of 5)
+  - Same UI pattern as Small Blind screen
+  - Transitions to Active Game screen on button press
+- **Active Game Timer**:
+  - Countdown timer with 1-second tick updates
+  - Round number, small blind, big blind display (48pt font)
+  - Automatic blind doubling when timer expires
+  - Musical tone sequence on round transitions
+  - Pause menu system with touch and rotary+button controls
+- **Pause Menu System**:
+  - Tap menu button or press Button A to pause
+  - 5 menu items: Resume, Reset, Skip Round, Settings (placeholder), Power Off
+  - Navigate with rotary encoder or tap menu items directly
+  - Resume/skip round functionality, reset to config screen
+- **Button A**:
+  - 100ms debounced GPIO polling (replaces broken M5.BtnA API)
+  - Short press (<2s) opens pause menu
+  - Long press (≥2s) powers off device
+- **Display Layout**:
+  - Optimized for 240x240 circular display
+  - Menu button centered at bottom for visibility
+  - Proper spacing for 48pt fonts
 
-### ⚠️ In Progress / Incomplete
-- Big blind configuration screen
-- Timer countdown functionality
-- Screen state transitions (button click handlers)
-- Blind progression/doubling logic
-- Round duration configuration
-- Active game timer with elapsed time display
+### ⚠️ Known Limitations
+- Settings menu item is placeholder (not implemented)
+- No persistent storage (configuration resets on power cycle)
 
 ## Key Configuration Constants
 
@@ -132,29 +230,25 @@ Available through `ui::get()` in [src/ui/ui_root.hpp](src/ui/ui_root.hpp):
 - `focus_proxy` - LVGL input group target
 
 ## Input System
-- **Encoder events** routed directly to active screen handler via `encoder_notify_diff()`
-- **Button A** polled directly via GPIO in `app_tasks::tick()` (press/release/click detection)
-  - **⚠️ GPIO polling is required**: `M5.BtnA` Button_Class API is non-functional on M5Stack Dial
-  - Uses ESP-IDF `gpio_get_level(GPIO_NUM_42)` with manual debounce logic
-  - Detects press, release, and click events through state tracking
 
-## Next Development Steps
+### Hardware Modules (see "M5Unified & Hardware Abstraction" section above)
+- **Button A** - [`hardware::Button`](src/hardware/button.hpp) instance on GPIO 42
+  - 100ms debounce, short press (<2s) and long press (≥2s) detection
+  - Replaces broken `M5.BtnA` API with direct GPIO polling
+  - Callbacks route to ScreenManager for short press, M5.Power.powerOff() for long press
+- **Rotary Encoder** - [`hardware::Encoder`](src/hardware/encoder.hpp) singleton
+  - Hardware PCNT peripheral (zero CPU overhead, 1000ns glitch filter)
+  - Low-level C callback `encoder_notify_diff()` bridges to C++ singleton
+  - Rotation callback routes to ScreenManager which forwards to active screen
+- **Touch** - Via M5Unified's touch driver in `m5dial_lvgl` component
+  - FT3267 touchscreen I2C driver
+  - LVGL pointer input device type
+  - Used for menu button and pause menu item taps
 
-### Priority Tasks
-1. **Screen State Machine**: Implement transitions between configuration screens and active game
-2. **Big Blind Screen**: Clone small blind screen with appropriate range/title
-3. **Round Duration Screen**: Configure minutes per round
-4. **Active Game Timer**: Countdown display with 1-second tick updates
-5. **Blind Doubling Logic**: Auto-advance when timer expires
-6. **Sound Cues**: Timer warnings, round transitions
-
-### Button A Handler
-Currently logs press/release/click events via GPIO polling. Needs implementation:
-- Advance from small blind → round minutes → start game
-- Pause/resume timer during active game
-- Power off device when pressed during active game (original behavior)
-
-**Note**: Must continue using direct GPIO polling - M5.BtnA API does not work on this hardware.
+### Input Flow
+1. **Encoder rotation** → PCNT hardware counts → `encoder_notify_diff(int diff)` → `hardware::Encoder::notify_rotation()` → registered callback → `ScreenManager::handle_encoder()` → active screen's `handle_encoder()`
+2. **Button A press** → GPIO polling in `hardware::Button::update()` → debounce logic → short/long press detection → registered callbacks
+3. **Touch events** → M5.Touch I2C driver → LVGL pointer indev → LVGL event callbacks (e.g., `LV_EVENT_CLICKED` on menu button/items)
 
 ## Notes
 - Repository must be kept outside cloud-synced folders (Dropbox, iCloud) to avoid ESP-IDF build issues
@@ -162,7 +256,35 @@ Currently logs press/release/click events via GPIO polling. Needs implementation
 - LVGL 9.x required (earlier versions incompatible)
 - Custom `m5dial_lvgl` component handles display driver and touch/encoder integration
 - Git branch: `main` (no separate main branch configured)
-- **Button A Hardware Limitation**: The M5Stack Dial does not support M5Unified's Button_Class API (`M5.BtnA.wasClicked()`, etc.). Only direct GPIO polling via ESP-IDF works. This is a known hardware/library compatibility issue with the StampS3-based Dial device.
+
+## Architecture Decision: Why We Keep M5Unified
+
+**TL;DR**: M5Unified stays because it provides mature, tested display/touch drivers. We extend it with custom hardware modules where needed (button debouncing, encoder PCNT).
+
+### What Works Well
+✅ **Display**: M5GFX via M5.Display.* is mature and handles GC9A01 LCD perfectly
+✅ **Touch**: FT3267 touchscreen driver via M5.Touch.* works reliably
+✅ **Speaker**: M5.Speaker.tone() provides clean PWM buzzer control (GPIO3)
+✅ **Power**: M5.Power.powerOff() handles GPIO46 control correctly
+
+### What Doesn't Work
+❌ **Button_Class API**: `M5.BtnA.wasClicked()` is non-functional on M5Stack Dial (StampS3 hardware incompatibility)
+⚠️ **Encoder API**: M5Unified's encoder support exists but is less efficient than direct PCNT hardware access
+
+### Our Solution
+- **Keep M5Unified** for display, touch, speaker, power (where it works well)
+- **Extend with hardware modules** for button (GPIO polling) and encoder (PCNT)
+- **Result**: Best of both worlds - mature drivers + custom optimizations
+
+### Why Not Remove M5Unified?
+Removing M5Unified would require:
+- Rewriting GC9A01 SPI display driver (~300 lines)
+- Rewriting FT3267 I2C touch driver (~200 lines)
+- Implementing LEDC PWM buzzer control (~50 lines)
+- High risk of DMA timing bugs, SPI speed issues, touch calibration problems
+- **Estimated effort**: 6-8 hours with significant debugging risk
+
+**Conclusion**: Pragmatic architecture wins. Use M5Unified where it works, extend where needed.
 
 ## License
 Creative Commons Attribution-NonCommercial 4.0 International

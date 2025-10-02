@@ -23,11 +23,11 @@ private:
 
     uint32_t last_tick_ms_ = 0;
     bool paused_ = false;
-    int menu_selection_ = 0;  // 0=Resume, 1=Reset, 2=Skip, 3=Settings, 4=PowerOff
+    int menu_selection_ = 0;  // 0=Resume, 1=Reset, 2=Skip, 3=PowerOff
 
     static constexpr uint32_t kTickIntervalMs = 1000;  // 1 second
     static constexpr int kMaxBlind = 9999;             // Failsafe
-    static constexpr int kMenuItemCount = 5;
+    static constexpr int kMenuItemCount = 4;
 
     void update_timer_display();
     void update_blind_display();
@@ -39,4 +39,7 @@ private:
     void hide_menu();
     void update_menu_selection();
     void execute_menu_action();
+
+    static void menu_button_clicked_cb(lv_event_t* e);
+    static void menu_item_clicked_cb(lv_event_t* e);
 };

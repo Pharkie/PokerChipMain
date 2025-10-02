@@ -3,7 +3,7 @@
 #include <esp_log.h>
 #include "game_state.hpp"
 #include "screen_manager.hpp"
-#include "game_active_screen.hpp"
+#include "blind_progression_screen.hpp"
 
 namespace {
 constexpr const char* kLogTag = "round_minutes_screen";
@@ -18,7 +18,7 @@ void RoundMinutesScreen::on_enter() {
     ESP_LOGI(kLogTag, "Entering screen");
 
     // Reset to default value
-    value_ = 15;
+    value_ = 10;
 
     // Hide boot logo
     set_visible(ui().logo, false);
@@ -97,16 +97,13 @@ void RoundMinutesScreen::handle_button_click() {
     ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
 
     // Save to game state
-    auto& game = GameState::instance();
-    game.round_minutes = value_;
-    game.seconds_remaining = value_ * 60;
-    game.current_round = 1;
+    GameState::instance().round_minutes = value_;
 
     // Play confirmation tone (C8)
     play_tone(4186.0f, 120);
 
-    // Transition to GameActiveScreen
-    ScreenManager::instance().transition_to(&GameActiveScreen::instance());
+    // Transition to Blind Progression Screen
+    ScreenManager::instance().transition_to(&BlindProgressionScreen::instance());
 }
 
 void RoundMinutesScreen::update_display() {
