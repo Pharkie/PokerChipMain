@@ -22,15 +22,13 @@ private:
     static constexpr float kMultipliers[] = {1.5f, 2.0f, 1.25f};
     static constexpr const char* kNames[] = {"STANDARD", "TURBO", "RELAXED"};
     static constexpr const char* kDescriptions[] = {
-        "50% increase/round",
-        "Doubles each round",
-        "25% increase/round"
+        "Blinds +50%/round",
+        "Blinds double/round",
+        "Blinds +25%/round"
     };
-    static constexpr const char* kGameTimes[] = {
-        "Game time: ~60-75 mins",
-        "Game time: ~45-60 mins",
-        "Game time: ~90-120 mins"
-    };
+
+    // Starting stack: 16×25 + 20×50 + 6×100 = 2000 chips
+    static constexpr int kStartingStack = 2000;
 
     // Sound feedback tones
     static constexpr float kToneUp = 3520.0f;      // A7
@@ -39,6 +37,14 @@ private:
     static constexpr uint32_t kToneDuration = 120;
 
     int selection_ = 0;  // Default to STANDARD (now first item)
+    char game_time_buffer_[32];  // Buffer for dynamic game time string
 
     void update_display();
+    int calculate_estimated_rounds(float multiplier) const;
+
+    // Info overlay handlers
+    static void info_button_clicked_cb(lv_event_t* e);
+    static void info_overlay_clicked_cb(lv_event_t* e);
+    void show_info();
+    void hide_info();
 };

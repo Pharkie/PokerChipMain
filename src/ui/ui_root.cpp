@@ -207,6 +207,51 @@ void ui_init()
     lv_obj_set_style_text_align(g_handles.menu_paused_note, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(g_handles.menu_paused_note, LV_ALIGN_BOTTOM_MID, 0, -5);
 
+    // Info button (top-right corner, small circle with "i")
+    g_handles.info_button = lv_button_create(g_handles.screen);
+    lv_obj_set_size(g_handles.info_button, 30, 30);
+    lv_obj_align(g_handles.info_button, LV_ALIGN_TOP_RIGHT, -10, 10);
+    lv_obj_set_style_bg_color(g_handles.info_button, lv_color_hex(0x555555), LV_PART_MAIN);
+    lv_obj_set_style_radius(g_handles.info_button, 15, LV_PART_MAIN);
+    lv_obj_t *info_label = lv_label_create(g_handles.info_button);
+    lv_label_set_text(info_label, "i");
+    lv_obj_set_style_text_color(info_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_center(info_label);
+
+    // Info overlay (full screen, initially hidden)
+    g_handles.info_overlay = lv_obj_create(g_handles.screen);
+    lv_obj_set_size(g_handles.info_overlay, 240, 240);
+    lv_obj_set_pos(g_handles.info_overlay, 0, 0);
+    lv_obj_set_style_bg_color(g_handles.info_overlay, lv_color_black(), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(g_handles.info_overlay, LV_OPA_90, LV_PART_MAIN);
+    lv_obj_set_style_border_width(g_handles.info_overlay, 0, LV_PART_MAIN);
+    lv_obj_add_flag(g_handles.info_overlay, LV_OBJ_FLAG_CLICKABLE);
+
+    // Info overlay title
+    lv_obj_t *info_title = lv_label_create(g_handles.info_overlay);
+    lv_label_set_text(info_title, "CHIP BREAKDOWN");
+    apply_label_style(info_title, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(info_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(info_title, LV_ALIGN_TOP_MID, 0, 20);
+
+    // Info overlay content
+    lv_obj_t *info_content = lv_label_create(g_handles.info_overlay);
+    lv_label_set_text(info_content,
+        "Starting stack: 2000\n"
+        "\n"
+        "16 blue x 25 = 400\n"
+        "20 white x 50 = 1000\n"
+        "6 red x 100 = 600\n"
+        "\n"
+        "Riccy's set:\n"
+        "16 yellow, 16 white\n"
+        "8 red\n"
+        "\n"
+        "Tap to close");
+    apply_label_style(info_content, lv_color_hex(0xCCCCCC), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(info_content, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(info_content, LV_ALIGN_CENTER, 0, 10);
+
     hide(g_handles.big_number, true);
     hide(g_handles.page_title, true);
     hide(g_handles.pushtext_bg, true);
@@ -223,6 +268,8 @@ void ui_init()
     hide(g_handles.active_big_blind_label, true);
     hide(g_handles.menu_button, true);
     hide(g_handles.menu_overlay, true);
+    hide(g_handles.info_button, true);
+    hide(g_handles.info_overlay, true);
 }
 
 const Handles &get()

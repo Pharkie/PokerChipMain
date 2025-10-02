@@ -32,6 +32,10 @@ struct Handles
     lv_obj_t *menu_item_skip = nullptr;
     lv_obj_t *menu_item_poweroff = nullptr;
     lv_obj_t *menu_paused_note = nullptr;
+
+    // Info system
+    lv_obj_t *info_button = nullptr;
+    lv_obj_t *info_overlay = nullptr;
 };
 
 void ui_init();

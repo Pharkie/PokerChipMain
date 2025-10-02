@@ -29,10 +29,12 @@ void RoundMinutesScreen::on_enter() {
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 40);
     set_visible(ui().page_title, true);
 
-    // Setup big number display
-    update_display();
+    // Setup big number display - 48pt purple font
+    lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_48, LV_PART_MAIN);
+    lv_obj_set_style_text_color(ui().big_number, lv_color_hex(0xFF00DC), LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, 0);
+    update_display();
     set_visible(ui().big_number, true);
 
     // Setup push prompt background
