@@ -29,4 +29,10 @@ private:
     static constexpr uint32_t kToneDuration = 120;   // milliseconds
 
     void update_display();
+
+    // Info overlay handlers
+    static void info_button_clicked_cb(lv_event_t* e);
+    static void info_overlay_clicked_cb(lv_event_t* e);
+    void show_info();
+    void hide_info();
 };

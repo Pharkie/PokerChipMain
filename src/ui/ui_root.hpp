@@ -36,6 +36,7 @@ struct Handles
     // Info system
     lv_obj_t *info_button = nullptr;
     lv_obj_t *info_overlay = nullptr;
+    lv_obj_t *info_close_button = nullptr;
 };
 
 void ui_init();

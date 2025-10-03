@@ -62,6 +62,12 @@ void SmallBlindScreen::on_enter() {
     set_visible(ui().elapsed_secs, false);
     set_visible(ui().mins_label, false);
     set_visible(ui().secs_label, false);
+
+    // Show info button
+    set_visible(ui().info_button, true);
+    lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
 }
 
 void SmallBlindScreen::handle_encoder(int diff) {
@@ -112,4 +118,26 @@ void SmallBlindScreen::handle_button_click() {
 
 void SmallBlindScreen::update_display() {
     lv_label_set_text_fmt(ui().big_number, "%d", value_);
+}
+
+void SmallBlindScreen::info_button_clicked_cb(lv_event_t* e) {
+    SmallBlindScreen* screen = static_cast<SmallBlindScreen*>(lv_event_get_user_data(e));
+    screen->show_info();
+}
+
+void SmallBlindScreen::info_overlay_clicked_cb(lv_event_t* e) {
+    SmallBlindScreen* screen = static_cast<SmallBlindScreen*>(lv_event_get_user_data(e));
+    screen->hide_info();
+}
+
+void SmallBlindScreen::show_info() {
+    ESP_LOGI(kLogTag, "Showing info overlay");
+    set_visible(ui().info_overlay, true);
+    play_tone(1500.0f, 80);
+}
+
+void SmallBlindScreen::hide_info() {
+    ESP_LOGI(kLogTag, "Hiding info overlay");
+    set_visible(ui().info_overlay, false);
+    play_tone(1200.0f, 80);
 }

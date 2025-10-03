@@ -57,8 +57,9 @@ void BlindProgressionScreen::on_enter() {
     set_visible(ui().info_button, true);
     lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
 
-    // Register touch handler for info overlay
+    // Register touch handler for info overlay and close button
     lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
 
     // Update display with initial selection
     update_display();

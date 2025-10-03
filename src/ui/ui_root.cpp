@@ -207,12 +207,14 @@ void ui_init()
     lv_obj_set_style_text_align(g_handles.menu_paused_note, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(g_handles.menu_paused_note, LV_ALIGN_BOTTOM_MID, 0, -5);
 
-    // Info button (top-right corner, small circle with "i")
+    // Info button (right side, positioned inside circular display area)
     g_handles.info_button = lv_button_create(g_handles.screen);
-    lv_obj_set_size(g_handles.info_button, 30, 30);
-    lv_obj_align(g_handles.info_button, LV_ALIGN_TOP_RIGHT, -10, 10);
-    lv_obj_set_style_bg_color(g_handles.info_button, lv_color_hex(0x555555), LV_PART_MAIN);
-    lv_obj_set_style_radius(g_handles.info_button, 15, LV_PART_MAIN);
+    lv_obj_set_size(g_handles.info_button, 34, 34);
+    lv_obj_set_pos(g_handles.info_button, 185, 103);  // Right side, vertically centered for circular screen
+    lv_obj_set_style_bg_color(g_handles.info_button, lv_color_hex(0x666666), LV_PART_MAIN);
+    lv_obj_set_style_radius(g_handles.info_button, 17, LV_PART_MAIN);
+    lv_obj_set_style_border_width(g_handles.info_button, 2, LV_PART_MAIN);
+    lv_obj_set_style_border_color(g_handles.info_button, lv_color_hex(0x999999), LV_PART_MAIN);
     lv_obj_t *info_label = lv_label_create(g_handles.info_button);
     lv_label_set_text(info_label, "i");
     lv_obj_set_style_text_color(info_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
@@ -232,25 +234,48 @@ void ui_init()
     lv_label_set_text(info_title, "CHIP BREAKDOWN");
     apply_label_style(info_title, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
     lv_obj_set_style_text_align(info_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(info_title, LV_ALIGN_TOP_MID, 0, 20);
+    lv_obj_align(info_title, LV_ALIGN_TOP_MID, 0, 35);  // Moved down 20px
 
-    // Info overlay content
-    lv_obj_t *info_content = lv_label_create(g_handles.info_overlay);
-    lv_label_set_text(info_content,
-        "Starting stack: 2000\n"
-        "\n"
-        "16 blue x 25 = 400\n"
-        "20 white x 50 = 1000\n"
-        "6 red x 100 = 600\n"
-        "\n"
-        "Riccy's set:\n"
-        "16 yellow, 16 white\n"
-        "8 red\n"
-        "\n"
-        "Tap to close");
-    apply_label_style(info_content, lv_color_hex(0xCCCCCC), LV_FONT_DEFAULT);
-    lv_obj_set_style_text_align(info_content, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(info_content, LV_ALIGN_CENTER, 0, 10);
+    // Info overlay stack total
+    lv_obj_t *info_stack = lv_label_create(g_handles.info_overlay);
+    lv_label_set_text(info_stack, "Starting stack: 2000");
+    apply_label_style(info_stack, lv_color_hex(0xCCCCCC), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(info_stack, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(info_stack, LV_ALIGN_TOP_MID, 0, 65);  // Moved down 20px + 5px margin
+
+    // Blue chips line
+    lv_obj_t *info_blue = lv_label_create(g_handles.info_overlay);
+    lv_label_set_text(info_blue, "16 x Blue (25) = 400");
+    apply_label_style(info_blue, lv_color_hex(0x4488FF), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(info_blue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(info_blue, LV_ALIGN_CENTER, 0, 0);  // Moved down 20px
+
+    // White chips line
+    lv_obj_t *info_white = lv_label_create(g_handles.info_overlay);
+    lv_label_set_text(info_white, "20 x White (50) = 1000");
+    apply_label_style(info_white, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(info_white, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(info_white, LV_ALIGN_CENTER, 0, 25);  // Moved down 20px
+
+    // Red chips line
+    lv_obj_t *info_red = lv_label_create(g_handles.info_overlay);
+    lv_label_set_text(info_red, "6 x Red (100) = 600");
+    apply_label_style(info_red, lv_color_hex(0xFF4444), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(info_red, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(info_red, LV_ALIGN_CENTER, 0, 50);  // Moved down 20px
+
+    // Close button with label (upper-right, positioned inside circular display)
+    g_handles.info_close_button = lv_button_create(g_handles.info_overlay);
+    lv_obj_set_size(g_handles.info_close_button, 60, 30);  // Wider for "Close X"
+    lv_obj_set_pos(g_handles.info_close_button, 150, 25);  // Adjusted X for wider button
+    lv_obj_set_style_bg_color(g_handles.info_close_button, lv_color_hex(0x444444), LV_PART_MAIN);
+    lv_obj_set_style_radius(g_handles.info_close_button, 15, LV_PART_MAIN);
+    lv_obj_set_style_border_width(g_handles.info_close_button, 1, LV_PART_MAIN);
+    lv_obj_set_style_border_color(g_handles.info_close_button, lv_color_hex(0x888888), LV_PART_MAIN);
+    lv_obj_t *close_label = lv_label_create(g_handles.info_close_button);
+    lv_label_set_text(close_label, "Close X");
+    lv_obj_set_style_text_color(close_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_center(close_label);
 
     hide(g_handles.big_number, true);
     hide(g_handles.page_title, true);
