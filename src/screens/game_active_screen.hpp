@@ -38,6 +38,7 @@ private:
     void show_menu();
     void hide_menu();
     void update_menu_selection();
+    void update_paused_note();
     void execute_menu_action();
 
     static void menu_button_clicked_cb(lv_event_t* e);

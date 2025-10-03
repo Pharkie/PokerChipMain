@@ -62,11 +62,9 @@ void RoundMinutesScreen::on_enter() {
     set_visible(ui().mins_label, false);
     set_visible(ui().secs_label, false);
 
-    // Show info button
-    set_visible(ui().info_button, true);
-    lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
+    // Hide info button (only shown on screen 1)
+    set_visible(ui().info_button, false);
+    set_visible(ui().info_overlay, false);
 }
 
 void RoundMinutesScreen::handle_encoder(int diff) {

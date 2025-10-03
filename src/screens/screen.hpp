@@ -45,4 +45,8 @@ protected:
 
     /// Helper to play a tone through M5 speaker.
     void play_tone(float freq_hz, uint32_t duration_ms);
+
+    /// Check if a modal overlay is currently blocking input.
+    /// Uses LVGL widget visibility as single source of truth.
+    bool is_modal_blocking() const;
 };

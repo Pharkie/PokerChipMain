@@ -25,7 +25,7 @@ void BlindProgressionScreen::on_enter() {
     set_visible(ui().logo, false);
 
     // Setup title - smaller font and higher position
-    lv_label_set_text(ui().page_title, "Progression");
+    lv_label_set_text(ui().page_title, "Mode");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 20);
     set_visible(ui().page_title, true);
@@ -53,13 +53,9 @@ void BlindProgressionScreen::on_enter() {
     lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -8);
     set_visible(ui().down_arrow, true);
 
-    // Show info button and register touch handler
-    set_visible(ui().info_button, true);
-    lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
-
-    // Register touch handler for info overlay and close button
-    lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
+    // Hide info button (only shown on screen 1)
+    set_visible(ui().info_button, false);
+    set_visible(ui().info_overlay, false);
 
     // Update display with initial selection
     update_display();

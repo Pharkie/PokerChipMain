@@ -23,3 +23,9 @@ void Screen::play_tone(float freq_hz, uint32_t duration_ms) {
         M5.Speaker.tone(freq_hz, duration_ms);
     }
 }
+
+bool Screen::is_modal_blocking() const {
+    // Check if info overlay is visible (single source of truth)
+    return ui().info_overlay &&
+           !lv_obj_has_flag(ui().info_overlay, LV_OBJ_FLAG_HIDDEN);
+}

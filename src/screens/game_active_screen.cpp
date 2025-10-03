@@ -261,6 +261,7 @@ void GameActiveScreen::show_menu() {
     set_visible(ui().menu_overlay, true);
     menu_selection_ = 0;  // Default to Resume
     update_menu_selection();
+    update_paused_note();
 }
 
 void GameActiveScreen::hide_menu() {
@@ -298,6 +299,13 @@ void GameActiveScreen::update_menu_selection() {
             lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
         }
     }
+}
+
+void GameActiveScreen::update_paused_note() {
+    auto& game = GameState::instance();
+    int mins = game.seconds_remaining / 60;
+    int secs = game.seconds_remaining % 60;
+    lv_label_set_text_fmt(ui().menu_paused_note, "Paused %02d:%02d", mins, secs);
 }
 
 void GameActiveScreen::execute_menu_action() {

@@ -71,8 +71,8 @@ void SmallBlindScreen::on_enter() {
 }
 
 void SmallBlindScreen::handle_encoder(int diff) {
-    if (diff == 0) {
-        return;
+    if (diff == 0 || is_modal_blocking()) {
+        return;  // Ignore encoder when modal overlay is shown
     }
 
     // Normalize to step delta
@@ -103,6 +103,12 @@ void SmallBlindScreen::handle_encoder(int diff) {
 }
 
 void SmallBlindScreen::handle_button_click() {
+    // If modal overlay is blocking, close it instead of advancing
+    if (is_modal_blocking()) {
+        hide_info();
+        return;
+    }
+
     ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
 
     // Save to game state
