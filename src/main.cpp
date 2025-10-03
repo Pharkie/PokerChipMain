@@ -11,13 +11,18 @@
 #include "input/encoder_input.hpp"
 #include "hardware/button.hpp"
 #include "hardware/encoder.hpp"
+#include "hardware/config.hpp"
 #include "screens/screen_manager.hpp"
 #include "screens/small_blind_screen.hpp"
 
 static const char *TAG = "poker_chip";
 
-// Hardware instances
-static hardware::Button* g_btnA = nullptr;
+// Hardware instances (static allocation - no heap)
+static hardware::Button g_btnA(
+    hardware::config::pins::BUTTON_A,
+    hardware::config::button::DEBOUNCE_MS,
+    hardware::config::button::LONG_PRESS_MS
+);
 
 extern const uint8_t _binary_src_images_riccy_png_start[];
 extern const uint8_t _binary_src_images_riccy_png_end[];
@@ -60,11 +65,10 @@ void setup()
     encoder_input::init(ui::get().focus_proxy);
 
     // Initialize hardware modules
-    g_btnA = new hardware::Button(GPIO_NUM_42, 100, 2000);  // 100ms debounce, 2s long press
-    g_btnA->on_short_press([]() {
+    g_btnA.on_short_press([]() {
         ScreenManager::instance().handle_button_click();
     });
-    g_btnA->on_long_press([]() {
+    g_btnA.on_long_press([]() {
         M5.Power.powerOff();
     });
 
@@ -84,9 +88,7 @@ void loop()
     m5dial_lvgl_next();
 
     // Update hardware modules
-    if (g_btnA) {
-        g_btnA->update();
-    }
+    g_btnA.update();
 
     // Update active screen
     ScreenManager::instance().tick();

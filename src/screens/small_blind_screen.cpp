@@ -111,9 +111,8 @@ void SmallBlindScreen::handle_button_click() {
 
     ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
 
-    // Save to game state
-    GameState::instance().small_blind = value_;
-    GameState::instance().big_blind = value_ * 2;
+    // Save to game state (big_blind automatically set to 2x small_blind)
+    GameState::instance().set_small_blind(value_);
 
     // Play confirmation tone (G7)
     play_tone(2960.0f, 120);

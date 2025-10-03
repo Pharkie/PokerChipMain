@@ -106,10 +106,10 @@ void GameActiveScreen::on_enter() {
     menu_selection_ = 0;
 
     ESP_LOGI(kLogTag, "Game started: Round %d, SB=%d, BB=%d, Time=%ds",
-             GameState::instance().current_round,
-             GameState::instance().small_blind,
-             GameState::instance().big_blind,
-             GameState::instance().seconds_remaining);
+             GameState::instance().current_round(),
+             GameState::instance().small_blind(),
+             GameState::instance().big_blind(),
+             GameState::instance().seconds_remaining());
 }
 
 void GameActiveScreen::on_exit() {
@@ -169,12 +169,12 @@ void GameActiveScreen::tick() {
 
     auto& game = GameState::instance();
 
-    if (game.seconds_remaining > 0) {
-        game.seconds_remaining--;
+    if (game.seconds_remaining() > 0) {
+        int new_seconds = game.decrement_seconds();
         update_timer_display();
 
-        if (game.seconds_remaining == 0) {
-            ESP_LOGI(kLogTag, "Round %d complete", game.current_round);
+        if (new_seconds == 0) {
+            ESP_LOGI(kLogTag, "Round %d complete", game.current_round());
             advance_round();
         }
     }
@@ -182,8 +182,8 @@ void GameActiveScreen::tick() {
 
 void GameActiveScreen::update_timer_display() {
     auto& game = GameState::instance();
-    int mins = game.seconds_remaining / 60;
-    int secs = game.seconds_remaining % 60;
+    int mins = game.seconds_remaining() / 60;
+    int secs = game.seconds_remaining() % 60;
 
     lv_label_set_text_fmt(ui().elapsed_mins, "%02d", mins);
     lv_label_set_text_fmt(ui().elapsed_secs, "%02d", secs);
@@ -195,51 +195,48 @@ void GameActiveScreen::update_timer_display() {
 
 void GameActiveScreen::update_blind_display() {
     auto& game = GameState::instance();
-    lv_label_set_text_fmt(ui().small_blind_active, "%d", game.small_blind);
-    lv_label_set_text_fmt(ui().big_blind_active, "%d", game.big_blind);
+    lv_label_set_text_fmt(ui().small_blind_active, "%d", game.small_blind());
+    lv_label_set_text_fmt(ui().big_blind_active, "%d", game.big_blind());
 }
 
 void GameActiveScreen::update_round_title() {
     auto& game = GameState::instance();
-    lv_label_set_text_fmt(ui().page_title, "Round %d", game.current_round);
+    lv_label_set_text_fmt(ui().page_title, "Round %d", game.current_round());
 }
 
 void GameActiveScreen::advance_round() {
     auto& game = GameState::instance();
 
     // Increment round
-    game.current_round++;
+    game.set_current_round(game.current_round() + 1);
 
     // Store previous blind for minimum increase check
-    int prev_small_blind = game.small_blind;
+    int prev_small_blind = game.small_blind();
 
     // Apply multiplier to small blind
-    float new_sb = game.small_blind * game.blind_multiplier;
+    float new_sb = game.small_blind() * game.blind_multiplier();
 
     // Round to nearest 25
-    game.small_blind = static_cast<int>((new_sb + 12.5f) / 25) * 25;
+    int new_small_blind = static_cast<int>((new_sb + 12.5f) / 25) * 25;
 
     // Ensure minimum increase of 25
-    if (game.small_blind <= prev_small_blind) {
-        game.small_blind = prev_small_blind + 25;
+    if (new_small_blind <= prev_small_blind) {
+        new_small_blind = prev_small_blind + 25;
     }
-
-    // Big blind always 2x small blind
-    game.big_blind = game.small_blind * 2;
 
     // Apply failsafe
-    if (game.small_blind > kMaxBlind) {
-        game.small_blind = kMaxBlind;
+    if (new_small_blind > kMaxBlind) {
+        new_small_blind = kMaxBlind;
     }
-    if (game.big_blind > kMaxBlind) {
-        game.big_blind = kMaxBlind;
-    }
+
+    // Update blinds (big_blind automatically set to 2x small_blind)
+    game.update_blinds(new_small_blind);
 
     // Reset timer
-    game.seconds_remaining = game.round_minutes * 60;
+    game.set_seconds_remaining(game.round_minutes() * 60);
 
     ESP_LOGI(kLogTag, "Advanced to Round %d: SB=%d, BB=%d (multiplier=%.2fx)",
-             game.current_round, game.small_blind, game.big_blind, game.blind_multiplier);
+             game.current_round(), game.small_blind(), game.big_blind(), game.blind_multiplier());
 
     // Update displays
     update_round_title();
@@ -303,8 +300,8 @@ void GameActiveScreen::update_menu_selection() {
 
 void GameActiveScreen::update_paused_note() {
     auto& game = GameState::instance();
-    int mins = game.seconds_remaining / 60;
-    int secs = game.seconds_remaining % 60;
+    int mins = game.seconds_remaining() / 60;
+    int secs = game.seconds_remaining() % 60;
     lv_label_set_text_fmt(ui().menu_paused_note, "Paused %02d:%02d", mins, secs);
 }
 

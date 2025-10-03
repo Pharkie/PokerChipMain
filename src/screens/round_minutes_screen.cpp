@@ -103,7 +103,7 @@ void RoundMinutesScreen::handle_button_click() {
     ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
 
     // Save to game state
-    GameState::instance().round_minutes = value_;
+    GameState::instance().set_round_minutes(value_);
 
     // Play confirmation tone (C8)
     play_tone(4186.0f, 120);

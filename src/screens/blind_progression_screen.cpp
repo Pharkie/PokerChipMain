@@ -110,10 +110,10 @@ void BlindProgressionScreen::handle_button_click() {
 
     // Store selected multiplier in game state
     GameState& game = GameState::instance();
-    game.blind_multiplier = kMultipliers[selection_];
+    game.set_blind_multiplier(kMultipliers[selection_]);
 
     // Initialize timer for first round
-    game.seconds_remaining = game.round_minutes * 60;
+    game.set_seconds_remaining(game.round_minutes() * 60);
 
     // Play confirmation tone
     play_tone(2637.0f, 120);  // E7
@@ -124,7 +124,7 @@ void BlindProgressionScreen::handle_button_click() {
 
 int BlindProgressionScreen::calculate_estimated_rounds(float multiplier) const {
     const GameState& game = GameState::instance();
-    int small_blind = game.small_blind;
+    int small_blind = game.small_blind();
 
     // Simulate blind progression until endgame
     // Game typically ends when average stack gets very short relative to blinds
@@ -157,7 +157,7 @@ void BlindProgressionScreen::update_display() {
     // Calculate dynamic game time estimate
     const GameState& game = GameState::instance();
     int estimated_rounds = calculate_estimated_rounds(kMultipliers[selection_]);
-    int total_minutes = estimated_rounds * game.round_minutes;
+    int total_minutes = estimated_rounds * game.round_minutes();
 
     snprintf(game_time_buffer_, sizeof(game_time_buffer_),
              "Game time: ~%d mins", total_minutes);
