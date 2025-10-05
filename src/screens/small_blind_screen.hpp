@@ -31,7 +31,8 @@ private:
 
     void update_display();
 
-    // Info overlay handlers
+    // Touch handlers
+    static void push_button_clicked_cb(lv_event_t* e);
     static void info_button_clicked_cb(lv_event_t* e);
     static void info_overlay_clicked_cb(lv_event_t* e);
     void show_info();

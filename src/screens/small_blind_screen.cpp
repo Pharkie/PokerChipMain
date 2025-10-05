@@ -54,6 +54,9 @@ void SmallBlindScreen::on_enter() {
     lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
+
+    // Make push button touchable
+    lv_obj_add_event_cb(ui().pushtext_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
 }
 
 void SmallBlindScreen::on_exit() {
@@ -116,6 +119,11 @@ void SmallBlindScreen::handle_button_click() {
 
 void SmallBlindScreen::update_display() {
     lv_label_set_text_fmt(ui().big_number, "%d", value_);
+}
+
+void SmallBlindScreen::push_button_clicked_cb(lv_event_t* e) {
+    SmallBlindScreen* screen = static_cast<SmallBlindScreen*>(lv_event_get_user_data(e));
+    screen->handle_button_click();
 }
 
 void SmallBlindScreen::info_button_clicked_cb(lv_event_t* e) {

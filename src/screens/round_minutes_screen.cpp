@@ -47,6 +47,9 @@ void RoundMinutesScreen::on_enter() {
 
     // Setup down arrow
     lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -4);
+
+    // Make push button touchable
+    lv_obj_add_event_cb(ui().pushtext_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
 }
 
 void RoundMinutesScreen::handle_encoder(int diff) {
@@ -96,6 +99,11 @@ void RoundMinutesScreen::handle_button_click() {
 
 void RoundMinutesScreen::update_display() {
     lv_label_set_text_fmt(ui().big_number, "%d", value_);
+}
+
+void RoundMinutesScreen::push_button_clicked_cb(lv_event_t* e) {
+    RoundMinutesScreen* screen = static_cast<RoundMinutesScreen*>(lv_event_get_user_data(e));
+    screen->handle_button_click();
 }
 
 void RoundMinutesScreen::info_button_clicked_cb(lv_event_t* e) {

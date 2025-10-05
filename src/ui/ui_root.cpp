@@ -73,6 +73,7 @@ void ui_init()
 
     g_handles.pushtext_bg = lv_obj_create(g_handles.screen);
     lv_obj_clear_flag(g_handles.pushtext_bg, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(g_handles.pushtext_bg, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_size(g_handles.pushtext_bg, 251, 62);
     lv_obj_set_pos(g_handles.pushtext_bg, -3, 190);
     lv_obj_set_style_bg_color(g_handles.pushtext_bg, lv_color_hex(0xDF7B0F), LV_PART_MAIN);

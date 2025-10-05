@@ -52,6 +52,9 @@ void BlindProgressionScreen::on_enter() {
     // Update display with initial selection
     update_display();
 
+    // Make push button touchable
+    lv_obj_add_event_cb(ui().pushtext_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
+
     ESP_LOGI(kLogTag, "Initial selection: %s", kNames[selection_]);
 }
 
@@ -147,6 +150,11 @@ void BlindProgressionScreen::update_display() {
     lv_obj_set_style_text_color(ui().big_blind_active, lv_color_hex(0x777777), LV_PART_MAIN);
     lv_obj_align(ui().big_blind_active, LV_ALIGN_CENTER, 0, 20);
     set_visible(ui().big_blind_active, true);
+}
+
+void BlindProgressionScreen::push_button_clicked_cb(lv_event_t* e) {
+    BlindProgressionScreen* screen = static_cast<BlindProgressionScreen*>(lv_event_get_user_data(e));
+    screen->handle_button_click();
 }
 
 void BlindProgressionScreen::info_button_clicked_cb(lv_event_t* e) {
