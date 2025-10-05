@@ -81,7 +81,7 @@ void ui_init()
     lv_obj_set_style_border_width(g_handles.pushtext_bg, 0, LV_PART_MAIN);
 
     g_handles.push_text = lv_label_create(g_handles.screen);
-    lv_label_set_text(g_handles.push_text, "Push bezel");
+    lv_label_set_text(g_handles.push_text, "Confirm");
     apply_label_style(g_handles.push_text, lv_color_hex(0x000000), LV_FONT_DEFAULT);
     lv_obj_set_pos(g_handles.push_text, 97, 202);
 
@@ -154,50 +154,61 @@ void ui_init()
     lv_obj_set_style_bg_color(g_handles.menu_overlay, lv_color_black(), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(g_handles.menu_overlay, LV_OPA_90, LV_PART_MAIN);
     lv_obj_set_style_border_width(g_handles.menu_overlay, 0, LV_PART_MAIN);
+    lv_obj_clear_flag(g_handles.menu_overlay, LV_OBJ_FLAG_SCROLLABLE);  // Disable scrolling
 
-    // Menu items (4 buttons with larger height for better touch targets)
+    // "Paused MM:SS" label at top
+    g_handles.menu_paused_note = lv_label_create(g_handles.menu_overlay);
+    lv_label_set_text(g_handles.menu_paused_note, "Paused");
+    apply_label_style(g_handles.menu_paused_note, lv_color_hex(0xCCCCCC), LV_FONT_DEFAULT);
+    lv_obj_set_style_text_align(g_handles.menu_paused_note, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(g_handles.menu_paused_note, LV_ALIGN_TOP_MID, 0, 20);
+
+    // Menu items (5 buttons, 28px height, 32px spacing = 160px total)
+    // Positioned below paused note: y=55, 87, 119, 151, 183 (ends at 211)
     g_handles.menu_item_resume = lv_button_create(g_handles.menu_overlay);
-    lv_obj_set_size(g_handles.menu_item_resume, 180, 38);
-    lv_obj_align(g_handles.menu_item_resume, LV_ALIGN_CENTER, 0, -75);
+    lv_obj_set_size(g_handles.menu_item_resume, 180, 28);
+    lv_obj_align(g_handles.menu_item_resume, LV_ALIGN_TOP_MID, 0, 55);
     lv_obj_set_style_bg_color(g_handles.menu_item_resume, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(g_handles.menu_item_resume, 6, LV_PART_MAIN);
     lv_obj_t *resume_label = lv_label_create(g_handles.menu_item_resume);
     lv_label_set_text(resume_label, "Resume");
     lv_obj_center(resume_label);
 
-    g_handles.menu_item_reset = lv_button_create(g_handles.menu_overlay);
-    lv_obj_set_size(g_handles.menu_item_reset, 180, 38);
-    lv_obj_align(g_handles.menu_item_reset, LV_ALIGN_CENTER, 0, -30);
-    lv_obj_set_style_bg_color(g_handles.menu_item_reset, lv_color_hex(0x555555), LV_PART_MAIN);
-    lv_obj_set_style_radius(g_handles.menu_item_reset, 6, LV_PART_MAIN);
-    lv_obj_t *reset_label = lv_label_create(g_handles.menu_item_reset);
-    lv_label_set_text(reset_label, "New Game");
-    lv_obj_center(reset_label);
-
     g_handles.menu_item_skip = lv_button_create(g_handles.menu_overlay);
-    lv_obj_set_size(g_handles.menu_item_skip, 180, 38);
-    lv_obj_align(g_handles.menu_item_skip, LV_ALIGN_CENTER, 0, 15);
+    lv_obj_set_size(g_handles.menu_item_skip, 180, 28);
+    lv_obj_align(g_handles.menu_item_skip, LV_ALIGN_TOP_MID, 0, 87);
     lv_obj_set_style_bg_color(g_handles.menu_item_skip, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(g_handles.menu_item_skip, 6, LV_PART_MAIN);
     lv_obj_t *skip_label = lv_label_create(g_handles.menu_item_skip);
     lv_label_set_text(skip_label, "Skip Round");
     lv_obj_center(skip_label);
 
+    g_handles.menu_item_volume = lv_button_create(g_handles.menu_overlay);
+    lv_obj_set_size(g_handles.menu_item_volume, 180, 28);
+    lv_obj_align(g_handles.menu_item_volume, LV_ALIGN_TOP_MID, 0, 119);
+    lv_obj_set_style_bg_color(g_handles.menu_item_volume, lv_color_hex(0x555555), LV_PART_MAIN);
+    lv_obj_set_style_radius(g_handles.menu_item_volume, 6, LV_PART_MAIN);
+    lv_obj_t *volume_label = lv_label_create(g_handles.menu_item_volume);
+    lv_label_set_text(volume_label, "Volume");
+    lv_obj_center(volume_label);
+
+    g_handles.menu_item_reset = lv_button_create(g_handles.menu_overlay);
+    lv_obj_set_size(g_handles.menu_item_reset, 180, 28);
+    lv_obj_align(g_handles.menu_item_reset, LV_ALIGN_TOP_MID, 0, 151);
+    lv_obj_set_style_bg_color(g_handles.menu_item_reset, lv_color_hex(0x555555), LV_PART_MAIN);
+    lv_obj_set_style_radius(g_handles.menu_item_reset, 6, LV_PART_MAIN);
+    lv_obj_t *reset_label = lv_label_create(g_handles.menu_item_reset);
+    lv_label_set_text(reset_label, "New Game");
+    lv_obj_center(reset_label);
+
     g_handles.menu_item_poweroff = lv_button_create(g_handles.menu_overlay);
-    lv_obj_set_size(g_handles.menu_item_poweroff, 180, 38);
-    lv_obj_align(g_handles.menu_item_poweroff, LV_ALIGN_CENTER, 0, 60);
+    lv_obj_set_size(g_handles.menu_item_poweroff, 180, 28);
+    lv_obj_align(g_handles.menu_item_poweroff, LV_ALIGN_TOP_MID, 0, 183);
     lv_obj_set_style_bg_color(g_handles.menu_item_poweroff, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(g_handles.menu_item_poweroff, 6, LV_PART_MAIN);
     lv_obj_t *poweroff_label = lv_label_create(g_handles.menu_item_poweroff);
     lv_label_set_text(poweroff_label, "Power Off");
     lv_obj_center(poweroff_label);
-
-    // Small "Paused" note below menu items
-    g_handles.menu_paused_note = lv_label_create(g_handles.menu_overlay);
-    lv_label_set_text(g_handles.menu_paused_note, "Paused");
-    apply_label_style(g_handles.menu_paused_note, lv_color_hex(0x888888), LV_FONT_DEFAULT);
-    lv_obj_set_style_text_align(g_handles.menu_paused_note, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(g_handles.menu_paused_note, LV_ALIGN_BOTTOM_MID, 0, -5);
 
     // Info button (right side, positioned inside circular display area)
     g_handles.info_button = lv_button_create(g_handles.screen);
@@ -298,6 +309,7 @@ void ui_init()
         &g_handles.menu_item_resume,
         &g_handles.menu_item_reset,
         &g_handles.menu_item_skip,
+        &g_handles.menu_item_volume,
         &g_handles.menu_item_poweroff,
         &g_handles.menu_paused_note
     };

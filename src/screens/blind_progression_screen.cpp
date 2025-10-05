@@ -26,7 +26,7 @@ void BlindProgressionScreen::on_enter() {
     ui::show_group(ui::groups().config_common);
 
     // Setup title - smaller font and higher position
-    lv_label_set_text(ui().page_title, "Progression");
+    lv_label_set_text(ui().page_title, "Mode");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 20);
 
@@ -60,6 +60,9 @@ void BlindProgressionScreen::on_enter() {
 
 void BlindProgressionScreen::on_exit() {
     ESP_LOGI(kLogTag, "Exiting screen");
+
+    // Remove event callback to prevent duplicates on re-entry
+    lv_obj_remove_event_cb(ui().pushtext_bg, push_button_clicked_cb);
 
     // Restore original colors for reused widgets (small_blind_active, big_blind_active)
     lv_obj_set_style_text_color(ui().small_blind_active, lv_color_hex(0x00FF46), LV_PART_MAIN);
@@ -170,11 +173,11 @@ void BlindProgressionScreen::info_overlay_clicked_cb(lv_event_t* e) {
 void BlindProgressionScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
-    play_tone(1500.0f, 80);
+    play_tone(kToneUp, 80);  // A7 - consistent with encoder up
 }
 
 void BlindProgressionScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
-    play_tone(1200.0f, 80);
+    play_tone(kToneDown, 80);  // F7 - consistent with encoder down
 }

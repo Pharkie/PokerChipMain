@@ -60,6 +60,12 @@ void SmallBlindScreen::on_enter() {
 }
 
 void SmallBlindScreen::on_exit() {
+    // Remove event callbacks to prevent duplicates on re-entry
+    lv_obj_remove_event_cb(ui().pushtext_bg, push_button_clicked_cb);
+    lv_obj_remove_event_cb(ui().info_button, info_button_clicked_cb);
+    lv_obj_remove_event_cb(ui().info_overlay, info_overlay_clicked_cb);
+    lv_obj_remove_event_cb(ui().info_close_button, info_overlay_clicked_cb);
+
     // Hide info button when leaving this screen
     set_visible(ui().info_button, false);
     set_visible(ui().info_overlay, false);
@@ -140,12 +146,12 @@ void SmallBlindScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
     set_visible(ui().info_close_button, true);
-    play_tone(1500.0f, 80);
+    play_tone(kToneUp, 80);  // A7 - consistent with encoder up
 }
 
 void SmallBlindScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
     set_visible(ui().info_close_button, false);
-    play_tone(1200.0f, 80);
+    play_tone(kToneDown, 80);  // F7 - consistent with encoder down
 }

@@ -1,31 +1,33 @@
-#include "round_minutes_screen.hpp"
+#include "volume_screen.hpp"
 
+#include <M5Unified.hpp>
 #include <esp_log.h>
-#include "game_state.hpp"
 #include "screen_manager.hpp"
-#include "blind_progression_screen.hpp"
+#include "game_active_screen.hpp"
+#include "storage/nvs_storage.hpp"
 
 namespace {
-constexpr const char* kLogTag = "round_minutes_screen";
+constexpr const char* kLogTag = "volume_screen";
 }
 
-RoundMinutesScreen& RoundMinutesScreen::instance() {
-    static RoundMinutesScreen instance;
+VolumeScreen& VolumeScreen::instance() {
+    static VolumeScreen instance;
     return instance;
 }
 
-void RoundMinutesScreen::on_enter() {
+void VolumeScreen::on_enter() {
     ESP_LOGI(kLogTag, "Entering screen");
 
-    // Reset to default value
-    value_ = 10;
+    // Load saved volume or use current value
+    value_ = storage::NVSStorage::instance().load_volume(5);
+    apply_volume();
 
     // Show config screen widgets
     ui::hide_all_groups();
     ui::show_group(ui::groups().config_common);
 
     // Setup title
-    lv_label_set_text(ui().page_title, "Mins between rounds");
+    lv_label_set_text(ui().page_title, "Volume");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 40);
 
@@ -41,7 +43,7 @@ void RoundMinutesScreen::on_enter() {
     lv_obj_set_height(ui().pushtext_bg, 60);
     lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
 
-    // Setup push text
+    // Setup push text (text already set to "Confirm" in ui_root.cpp)
     lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
 
@@ -52,12 +54,14 @@ void RoundMinutesScreen::on_enter() {
     lv_obj_add_event_cb(ui().pushtext_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
 }
 
-void RoundMinutesScreen::on_exit() {
+void VolumeScreen::on_exit() {
+    ESP_LOGI(kLogTag, "Exiting screen");
+
     // Remove event callback to prevent duplicates on re-entry
     lv_obj_remove_event_cb(ui().pushtext_bg, push_button_clicked_cb);
 }
 
-void RoundMinutesScreen::handle_encoder(int diff) {
+void VolumeScreen::handle_encoder(int diff) {
     if (diff == 0) {
         return;
     }
@@ -80,55 +84,41 @@ void RoundMinutesScreen::handle_encoder(int diff) {
     // Update value and play feedback
     if (next != value_) {
         value_ = next;
+        apply_volume();
         update_display();
         play_tone(step > 0 ? kToneUp : kToneDown, kToneDuration);
-        ESP_LOGI(kLogTag, "Round minutes -> %d", value_);
+        ESP_LOGI(kLogTag, "Volume -> %d", value_);
     } else if (boundary) {
         play_tone(kToneBoundary, kToneDuration);
         ESP_LOGI(kLogTag, "Boundary hit at %d", value_);
     }
 }
 
-void RoundMinutesScreen::handle_button_click() {
-    ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
+void VolumeScreen::handle_button_click() {
+    ESP_LOGI(kLogTag, "Button clicked, saving volume=%d", value_);
 
-    // Save to game state
-    GameState::instance().set_round_minutes(value_);
+    // Save to NVS
+    storage::NVSStorage::instance().save_volume(value_);
 
-    // Play confirmation tone (C8)
-    play_tone(4186.0f, 120);
+    // Play confirmation tone (G7)
+    play_tone(2960.0f, 120);
 
-    // Transition to Blind Progression Screen
-    ScreenManager::instance().transition_to(&BlindProgressionScreen::instance());
+    // Return to game active screen
+    ScreenManager::instance().transition_to(&GameActiveScreen::instance());
 }
 
-void RoundMinutesScreen::update_display() {
+void VolumeScreen::update_display() {
     lv_label_set_text_fmt(ui().big_number, "%d", value_);
 }
 
-void RoundMinutesScreen::push_button_clicked_cb(lv_event_t* e) {
-    RoundMinutesScreen* screen = static_cast<RoundMinutesScreen*>(lv_event_get_user_data(e));
+void VolumeScreen::push_button_clicked_cb(lv_event_t* e) {
+    VolumeScreen* screen = static_cast<VolumeScreen*>(lv_event_get_user_data(e));
     screen->handle_button_click();
 }
 
-void RoundMinutesScreen::info_button_clicked_cb(lv_event_t* e) {
-    RoundMinutesScreen* screen = static_cast<RoundMinutesScreen*>(lv_event_get_user_data(e));
-    screen->show_info();
-}
-
-void RoundMinutesScreen::info_overlay_clicked_cb(lv_event_t* e) {
-    RoundMinutesScreen* screen = static_cast<RoundMinutesScreen*>(lv_event_get_user_data(e));
-    screen->hide_info();
-}
-
-void RoundMinutesScreen::show_info() {
-    ESP_LOGI(kLogTag, "Showing info overlay");
-    set_visible(ui().info_overlay, true);
-    play_tone(kToneUp, 80);  // A7 - consistent with encoder up
-}
-
-void RoundMinutesScreen::hide_info() {
-    ESP_LOGI(kLogTag, "Hiding info overlay");
-    set_visible(ui().info_overlay, false);
-    play_tone(kToneDown, 80);  // F7 - consistent with encoder down
+void VolumeScreen::apply_volume() {
+    // Convert 0-10 scale to 0-255 M5.Speaker range
+    uint8_t speaker_volume = (value_ * 255) / 10;
+    M5.Speaker.setVolume(speaker_volume);
+    ESP_LOGI(kLogTag, "Applied volume: %d (speaker: %d/255)", value_, speaker_volume);
 }

@@ -23,11 +23,11 @@ private:
 
     uint32_t last_tick_ms_ = 0;
     bool paused_ = false;
-    int menu_selection_ = 0;  // 0=Resume, 1=Skip, 2=NewGame, 3=PowerOff
+    int menu_selection_ = 0;  // 0=Resume, 1=Skip, 2=NewGame, 3=Volume, 4=PowerOff
 
     static constexpr uint32_t kTickIntervalMs = 1000;  // 1 second
     static constexpr int kMaxBlind = 9999;             // Failsafe
-    static constexpr int kMenuItemCount = 4;
+    static constexpr int kMenuItemCount = 5;
 
     void update_timer_display();
     void update_blind_display();

@@ -14,6 +14,7 @@
 #include "hardware/config.hpp"
 #include "screens/screen_manager.hpp"
 #include "screens/small_blind_screen.hpp"
+#include "storage/nvs_storage.hpp"
 
 static const char *TAG = "poker_chip";
 
@@ -32,6 +33,13 @@ void setup()
     ESP_LOGI(TAG, "Program starting");
 
     M5.begin();
+
+    // Load saved volume from NVS and apply (0-10 scale -> 0-255 M5.Speaker range)
+    uint8_t volume = storage::NVSStorage::instance().load_volume(5);
+    uint8_t speaker_volume = (volume * 255) / 10;
+    M5.Speaker.setVolume(speaker_volume);
+    ESP_LOGI(TAG, "Loaded volume: %d (speaker: %d/255)", volume, speaker_volume);
+
     M5.Display.fillScreen(TFT_BLACK);
 
     // Show splash screen

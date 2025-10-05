@@ -29,6 +29,7 @@ struct Handles
     lv_obj_t *menu_item_resume = nullptr;
     lv_obj_t *menu_item_reset = nullptr;
     lv_obj_t *menu_item_skip = nullptr;
+    lv_obj_t *menu_item_volume = nullptr;
     lv_obj_t *menu_item_poweroff = nullptr;
     lv_obj_t *menu_paused_note = nullptr;
 

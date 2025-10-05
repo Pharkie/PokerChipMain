@@ -5,6 +5,7 @@
 #include "game_state.hpp"
 #include "screen_manager.hpp"
 #include "small_blind_screen.hpp"
+#include "volume_screen.hpp"
 
 namespace {
 constexpr const char* kLogTag = "game_active_screen";
@@ -74,6 +75,7 @@ void GameActiveScreen::on_enter() {
     lv_obj_add_event_cb(ui().menu_item_resume, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_reset, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_skip, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().menu_item_volume, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_poweroff, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
 
     // Hide menu overlay initially
@@ -239,6 +241,7 @@ void GameActiveScreen::show_menu() {
     set_visible(ui().menu_item_resume, true);
     set_visible(ui().menu_item_reset, true);
     set_visible(ui().menu_item_skip, true);
+    set_visible(ui().menu_item_volume, true);
     set_visible(ui().menu_item_poweroff, true);
     set_visible(ui().menu_paused_note, true);
     menu_selection_ = 0;  // Default to Resume
@@ -251,16 +254,19 @@ void GameActiveScreen::hide_menu() {
     set_visible(ui().menu_item_resume, false);
     set_visible(ui().menu_item_reset, false);
     set_visible(ui().menu_item_skip, false);
+    set_visible(ui().menu_item_volume, false);
     set_visible(ui().menu_item_poweroff, false);
     set_visible(ui().menu_paused_note, false);
 }
 
 void GameActiveScreen::update_menu_selection() {
     // Update menu item styles based on selection
+    // Order: Resume, Skip, Volume, New Game, Power Off
     lv_obj_t* items[] = {
         ui().menu_item_resume,
-        ui().menu_item_reset,
         ui().menu_item_skip,
+        ui().menu_item_volume,
+        ui().menu_item_reset,
         ui().menu_item_poweroff
     };
 
@@ -275,6 +281,7 @@ void GameActiveScreen::update_menu_selection() {
     const char* labels[] = {
         resume_label,
         skip_label,
+        "Volume",
         "New Game",
         "Power Off"
     };
@@ -320,13 +327,20 @@ void GameActiveScreen::execute_menu_action() {
             advance_round();
             break;
 
-        case 2:  // New Game
+        case 2:  // Volume
+            ESP_LOGI(kLogTag, "Opening volume screen");
+            paused_ = false;
+            hide_menu();
+            ScreenManager::instance().transition_to(&VolumeScreen::instance());
+            break;
+
+        case 3:  // New Game
             ESP_LOGI(kLogTag, "Resetting to small blind screen");
             GameState::instance().reset();
             ScreenManager::instance().transition_to(&SmallBlindScreen::instance());
             break;
 
-        case 3:  // Power Off
+        case 4:  // Power Off
             ESP_LOGI(kLogTag, "Powering off");
             M5.Power.powerOff();
             break;
@@ -351,10 +365,12 @@ void GameActiveScreen::menu_item_clicked_cb(lv_event_t* e) {
     lv_obj_t* clicked_item = static_cast<lv_obj_t*>(lv_event_get_target(e));
 
     // Determine which menu item was clicked
+    // Order: Resume, Skip, Volume, New Game, Power Off
     lv_obj_t* items[] = {
         screen->ui().menu_item_resume,
-        screen->ui().menu_item_reset,
         screen->ui().menu_item_skip,
+        screen->ui().menu_item_volume,
+        screen->ui().menu_item_reset,
         screen->ui().menu_item_poweroff
     };
 
