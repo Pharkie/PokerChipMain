@@ -51,17 +51,41 @@ These components work reliably and are well-tested across the M5Stack ecosystem.
 ### Hardware Abstraction Layer
 To work around M5Unified limitations and provide cleaner APIs, we built custom hardware modules:
 
+#### [src/hardware/config.hpp](src/hardware/config.hpp)
+**Purpose**: Centralized hardware configuration constants
+- Single source of truth for GPIO pin assignments
+- Timing constants (debounce, long press thresholds)
+- Easy to port to different hardware variants
+
+**Example**:
+```cpp
+namespace hardware::config {
+    namespace pins {
+        constexpr gpio_num_t BUTTON_A = GPIO_NUM_42;
+    }
+    namespace button {
+        constexpr uint32_t DEBOUNCE_MS = 100;
+        constexpr uint32_t LONG_PRESS_MS = 2000;
+    }
+}
+```
+
 #### [src/hardware/button.hpp](src/hardware/button.hpp) / [.cpp](src/hardware/button.cpp)
 **Purpose**: Debounced button input with short/long press detection
 - Replaces broken `M5.BtnA` Button_Class API
-- Uses direct GPIO polling with 100ms software debounce
-- Configurable long-press threshold (default 2000ms)
+- Uses direct GPIO polling with configurable debounce
 - Callback-based API: `on_short_press()`, `on_long_press()`
+- Static allocation (zero heap usage)
 - Fully reusable for any GPIO button
 
 **Usage Example**:
 ```cpp
-hardware::Button btnA(GPIO_NUM_42, 100, 2000);
+// Static allocation using config constants
+static hardware::Button btnA(
+    hardware::config::pins::BUTTON_A,
+    hardware::config::button::DEBOUNCE_MS,
+    hardware::config::button::LONG_PRESS_MS
+);
 btnA.on_short_press([]() { /* handle click */ });
 btnA.on_long_press([]() { M5.Power.powerOff(); });
 btnA.update();  // Call from main loop

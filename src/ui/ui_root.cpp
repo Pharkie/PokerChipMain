@@ -9,6 +9,7 @@ namespace ui
 namespace
 {
 Handles g_handles;
+WidgetGroups g_groups;
 
 void apply_label_style(lv_obj_t *label, lv_color_t color, const lv_font_t *font)
 {
@@ -277,29 +278,86 @@ void ui_init()
     lv_obj_set_style_text_color(close_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
     lv_obj_center(close_label);
 
-    hide(g_handles.big_number, true);
-    hide(g_handles.page_title, true);
-    hide(g_handles.pushtext_bg, true);
-    hide(g_handles.push_text, true);
-    hide(g_handles.down_arrow, true);
-    hide(g_handles.small_blind_active, true);
-    hide(g_handles.elapsed_mins, true);
-    hide(g_handles.big_blind_active, true);
-    hide(g_handles.mins_label, true);
-    hide(g_handles.elapsed_secs, true);
-    hide(g_handles.timer_colon, true);
-    hide(g_handles.secs_label, true);
-    hide(g_handles.active_small_blind_label, true);
-    hide(g_handles.active_big_blind_label, true);
-    hide(g_handles.menu_button, true);
-    hide(g_handles.menu_overlay, true);
-    hide(g_handles.info_button, true);
-    hide(g_handles.info_overlay, true);
+    // Initialize widget groups for efficient show/hide management
+    // Config screens (small blind, round minutes, progression)
+    g_groups.config_common = {
+        &g_handles.page_title,
+        &g_handles.big_number,
+        &g_handles.pushtext_bg,
+        &g_handles.push_text,
+        &g_handles.down_arrow
+    };
+
+    // Active game screen widgets
+    g_groups.game_active = {
+        &g_handles.page_title,  // Used for round number
+        &g_handles.small_blind_active,
+        &g_handles.big_blind_active,
+        &g_handles.active_small_blind_label,
+        &g_handles.active_big_blind_label,
+        &g_handles.elapsed_mins,
+        &g_handles.elapsed_secs,
+        &g_handles.timer_colon,
+        &g_handles.menu_button
+    };
+
+    // Menu overlay (not auto-hidden, managed by screen)
+    g_groups.menu = {
+        &g_handles.menu_overlay,
+        &g_handles.menu_item_resume,
+        &g_handles.menu_item_reset,
+        &g_handles.menu_item_skip,
+        &g_handles.menu_item_poweroff,
+        &g_handles.menu_paused_note
+    };
+
+    // Info overlay (not auto-hidden, managed by screen)
+    g_groups.info = {
+        &g_handles.info_overlay,
+        &g_handles.info_button,
+        &g_handles.info_close_button
+    };
+
+    // Hide all groups initially
+    hide_all_groups();
+    hide_group(g_groups.menu);
+    hide_group(g_groups.info);
+    hide(g_handles.logo, true);
 }
 
 const Handles &get()
 {
     return g_handles;
+}
+
+const WidgetGroups &groups()
+{
+    return g_groups;
+}
+
+void show_group(const std::vector<lv_obj_t**> &group)
+{
+    for (auto widget_ptr : group) {
+        if (widget_ptr && *widget_ptr) {
+            hide(*widget_ptr, false);
+        }
+    }
+}
+
+void hide_group(const std::vector<lv_obj_t**> &group)
+{
+    for (auto widget_ptr : group) {
+        if (widget_ptr && *widget_ptr) {
+            hide(*widget_ptr, true);
+        }
+    }
+}
+
+void hide_all_groups()
+{
+    hide_group(g_groups.config_common);
+    hide_group(g_groups.game_active);
+    // Note: menu and info overlays are NOT hidden here - they're managed separately
 }
 
 } // namespace ui

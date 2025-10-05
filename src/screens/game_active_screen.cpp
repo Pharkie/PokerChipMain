@@ -30,65 +30,47 @@ void GameActiveScreen::on_enter() {
 
     last_tick_ms_ = M5.millis();
 
-    // Hide configuration widgets
-    set_visible(ui().logo, false);
-    set_visible(ui().big_number, false);
-    set_visible(ui().pushtext_bg, false);
-    set_visible(ui().push_text, false);
-    set_visible(ui().down_arrow, false);
+    // Show active game widgets
+    ui::hide_all_groups();
+    ui::show_group(ui::groups().game_active);
 
     // Setup round title
     update_round_title();
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 15);
-    set_visible(ui().page_title, true);
 
     // Setup small blind display (large font) - positioned below title
     lv_obj_set_style_text_font(ui().small_blind_active, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().small_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().small_blind_active, LV_ALIGN_CENTER, -60, -25);
-    set_visible(ui().small_blind_active, true);
 
     lv_label_set_text(ui().active_small_blind_label, "Small\nBlind");
     lv_obj_set_style_text_align(ui().active_small_blind_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().active_small_blind_label, LV_ALIGN_CENTER, -60, -65);
-    set_visible(ui().active_small_blind_label, true);
 
     // Setup big blind display (large font) - positioned below title
     lv_obj_set_style_text_font(ui().big_blind_active, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().big_blind_active, LV_ALIGN_CENTER, 60, -25);
-    set_visible(ui().big_blind_active, true);
 
     lv_label_set_text(ui().active_big_blind_label, "Big\nBlind");
     lv_obj_set_style_text_align(ui().active_big_blind_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().active_big_blind_label, LV_ALIGN_CENTER, 60, -65);
-    set_visible(ui().active_big_blind_label, true);
 
     // Setup timer display (large font, MM:SS format with spacing)
     lv_obj_set_style_text_font(ui().elapsed_mins, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().elapsed_mins, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
     lv_obj_align(ui().elapsed_mins, LV_ALIGN_CENTER, -40, 25);
-    set_visible(ui().elapsed_mins, true);
 
     lv_obj_set_style_text_font(ui().elapsed_secs, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().elapsed_secs, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
     lv_obj_align(ui().elapsed_secs, LV_ALIGN_CENTER, 40, 25);
-    set_visible(ui().elapsed_secs, true);
 
     // Show timer colon (centered between MM and SS)
     lv_obj_align(ui().timer_colon, LV_ALIGN_CENTER, 0, 25);
-    set_visible(ui().timer_colon, true);
-
-    // Hide the "mins" and "secs" labels (not needed with large font)
-    set_visible(ui().mins_label, false);
-    set_visible(ui().secs_label, false);
-
-    // Show menu button
-    set_visible(ui().menu_button, true);
-    lv_obj_add_event_cb(ui().menu_button, menu_button_clicked_cb, LV_EVENT_CLICKED, this);
 
     // Register touch events for menu items
+    lv_obj_add_event_cb(ui().menu_button, menu_button_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_resume, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_reset, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_skip, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
@@ -114,8 +96,6 @@ void GameActiveScreen::on_enter() {
 
 void GameActiveScreen::on_exit() {
     ESP_LOGI(kLogTag, "Exiting screen");
-    set_visible(ui().menu_button, false);
-    set_visible(ui().timer_colon, false);
     hide_menu();
 }
 

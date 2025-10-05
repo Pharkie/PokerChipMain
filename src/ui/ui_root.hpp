@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lvgl.h>
+#include <vector>
 
 namespace ui
 {
@@ -39,7 +40,35 @@ struct Handles
     lv_obj_t *info_close_button = nullptr;
 };
 
+/// Widget groups for efficient show/hide management
+/// Widgets are organized by which screens use them
+struct WidgetGroups
+{
+    /// Configuration screens common widgets (small blind, round minutes, progression)
+    std::vector<lv_obj_t**> config_common;
+
+    /// Active game screen widgets
+    std::vector<lv_obj_t**> game_active;
+
+    /// Menu overlay widgets (not auto-managed - use show_menu/hide_menu)
+    std::vector<lv_obj_t**> menu;
+
+    /// Info overlay widgets (not auto-managed - use show_info/hide_info)
+    std::vector<lv_obj_t**> info;
+};
+
 void ui_init();
 const Handles &get();
+const WidgetGroups &groups();
+
+/// Show all widgets in a group
+void show_group(const std::vector<lv_obj_t**> &group);
+
+/// Hide all widgets in a group
+void hide_group(const std::vector<lv_obj_t**> &group);
+
+/// Hide all managed widget groups (config_common + game_active)
+/// Does NOT hide menu/info overlays (those are managed separately)
+void hide_all_groups();
 }
 

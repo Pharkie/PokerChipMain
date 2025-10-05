@@ -21,41 +21,33 @@ void BlindProgressionScreen::on_enter() {
     // Default to STANDARD (first option)
     selection_ = 0;
 
-    // Hide boot logo
-    set_visible(ui().logo, false);
+    // Show config screen widgets
+    ui::hide_all_groups();
+    ui::show_group(ui::groups().config_common);
 
     // Setup title - smaller font and higher position
-    lv_label_set_text(ui().page_title, "Mode");
+    lv_label_set_text(ui().page_title, "Progression");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 20);
-    set_visible(ui().page_title, true);
 
     // Setup big number display (option name) - use 24pt purple font
     lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_24, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui().big_number, lv_color_hex(0xFF00DC), LV_PART_MAIN);
     lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, -30);
-    set_visible(ui().big_number, true);
 
     // Setup push prompt background
     lv_obj_set_width(ui().pushtext_bg, 240);
     lv_obj_set_height(ui().pushtext_bg, 60);
     lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
-    set_visible(ui().pushtext_bg, true);
 
     // Setup push text
     lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
-    set_visible(ui().push_text, true);
 
     // Setup down arrow
     lv_obj_set_style_text_align(ui().down_arrow, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -8);
-    set_visible(ui().down_arrow, true);
-
-    // Hide info button (only shown on screen 1)
-    set_visible(ui().info_button, false);
-    set_visible(ui().info_overlay, false);
 
     // Update display with initial selection
     update_display();
@@ -65,19 +57,8 @@ void BlindProgressionScreen::on_enter() {
 
 void BlindProgressionScreen::on_exit() {
     ESP_LOGI(kLogTag, "Exiting screen");
-    set_visible(ui().page_title, false);
-    set_visible(ui().big_number, false);
-    set_visible(ui().pushtext_bg, false);
-    set_visible(ui().push_text, false);
-    set_visible(ui().down_arrow, false);
 
-    // Hide info button and overlay
-    set_visible(ui().info_button, false);
-    set_visible(ui().info_overlay, false);
-
-    // Hide and restore original colors for reused widgets
-    set_visible(ui().small_blind_active, false);
-    set_visible(ui().big_blind_active, false);
+    // Restore original colors for reused widgets (small_blind_active, big_blind_active)
     lv_obj_set_style_text_color(ui().small_blind_active, lv_color_hex(0x00FF46), LV_PART_MAIN);
     lv_obj_set_style_text_color(ui().big_blind_active, lv_color_hex(0x00FBFF), LV_PART_MAIN);
 }

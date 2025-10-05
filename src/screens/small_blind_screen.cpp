@@ -21,14 +21,14 @@ void SmallBlindScreen::on_enter() {
     // Reset to minimum value
     value_ = kMin;
 
-    // Hide boot logo
-    set_visible(ui().logo, false);
+    // Show config screen widgets
+    ui::hide_all_groups();
+    ui::show_group(ui::groups().config_common);
 
     // Setup title
     lv_label_set_text(ui().page_title, "Starting small blinds");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 40);
-    set_visible(ui().page_title, true);
 
     // Setup big number display - 48pt purple font
     lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_48, LV_PART_MAIN);
@@ -36,32 +36,18 @@ void SmallBlindScreen::on_enter() {
     lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, 0);
     update_display();
-    set_visible(ui().big_number, true);
 
     // Setup push prompt background
     lv_obj_set_width(ui().pushtext_bg, 240);
     lv_obj_set_height(ui().pushtext_bg, 60);
     lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
-    set_visible(ui().pushtext_bg, true);
 
     // Setup push text
     lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
-    set_visible(ui().push_text, true);
 
     // Setup down arrow
     lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -4);
-    set_visible(ui().down_arrow, true);
-
-    // Hide game active widgets
-    set_visible(ui().small_blind_active, false);
-    set_visible(ui().big_blind_active, false);
-    set_visible(ui().active_small_blind_label, false);
-    set_visible(ui().active_big_blind_label, false);
-    set_visible(ui().elapsed_mins, false);
-    set_visible(ui().elapsed_secs, false);
-    set_visible(ui().mins_label, false);
-    set_visible(ui().secs_label, false);
 
     // Show info button
     set_visible(ui().info_button, true);
