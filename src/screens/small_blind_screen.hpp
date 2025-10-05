@@ -24,9 +24,9 @@ private:
     static constexpr int kStep = 25;
     static constexpr int kMin = 25;
     static constexpr int kMax = 200;
-    static constexpr float kToneUp = 4186.0f;        // C8 (high = increment)
-    static constexpr float kToneDown = 2093.0f;      // C7 (low = decrement)
-    static constexpr float kToneBoundary = 1568.0f;  // G6 (lower = blocked)
+    static constexpr float kToneUp = 2637.0f;        // E7 (high = increment)
+    static constexpr float kToneDown = 1760.0f;      // A6 (low = decrement)
+    static constexpr float kToneBoundary = 1245.0f;  // D#6 (lower = blocked)
     static constexpr uint32_t kToneDuration = 60;    // milliseconds (quick feedback)
 
     void update_display();

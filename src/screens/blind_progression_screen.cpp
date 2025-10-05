@@ -99,8 +99,10 @@ void BlindProgressionScreen::handle_button_click() {
     // Initialize timer for first round
     game.set_seconds_remaining(game.round_minutes() * 60);
 
-    // Play confirmation tone (A7 - climax, game starting!)
-    play_tone(3520.0f, 150);
+    // Play confirmation tone (A7 → A7 double beep - climax, game starting!)
+    play_tone(3520.0f, 90);
+    M5.delay(60);
+    play_tone(3520.0f, 90);
 
     // Transition to game active screen
     ScreenManager::instance().transition_to(&GameActiveScreen::instance());
@@ -173,11 +175,17 @@ void BlindProgressionScreen::info_overlay_clicked_cb(lv_event_t* e) {
 void BlindProgressionScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
-    play_tone(2637.0f, 80);  // E7 - pleasant opening tone
+    // F#7 → A7 chirp (playful upward)
+    play_tone(2794.0f, 40);  // F#7
+    M5.delay(40);
+    play_tone(3520.0f, 60);  // A7
 }
 
 void BlindProgressionScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
-    play_tone(1976.0f, 80);  // B6 - lower closing tone
+    // A6 → F6 chirp (playful downward)
+    play_tone(1760.0f, 40);  // A6
+    M5.delay(40);
+    play_tone(1397.0f, 60);  // F6
 }

@@ -1,5 +1,6 @@
 #include "round_minutes_screen.hpp"
 
+#include <M5Unified.hpp>
 #include <esp_log.h>
 #include "game_state.hpp"
 #include "screen_manager.hpp"
@@ -95,8 +96,10 @@ void RoundMinutesScreen::handle_button_click() {
     // Save to game state
     GameState::instance().set_round_minutes(value_);
 
-    // Play confirmation tone (F7 - build excitement)
-    play_tone(2793.0f, 120);
+    // Play confirmation tone (F7 → F7 double beep - build excitement)
+    play_tone(2793.0f, 80);
+    M5.delay(60);
+    play_tone(2793.0f, 80);
 
     // Transition to Blind Progression Screen
     ScreenManager::instance().transition_to(&BlindProgressionScreen::instance());
@@ -124,11 +127,17 @@ void RoundMinutesScreen::info_overlay_clicked_cb(lv_event_t* e) {
 void RoundMinutesScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
-    play_tone(2637.0f, 80);  // E7 - pleasant opening tone
+    // F#7 → A7 chirp (playful upward)
+    play_tone(2794.0f, 40);  // F#7
+    M5.delay(40);
+    play_tone(3520.0f, 60);  // A7
 }
 
 void RoundMinutesScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
-    play_tone(1976.0f, 80);  // B6 - lower closing tone
+    // A6 → F6 chirp (playful downward)
+    play_tone(1760.0f, 40);  // A6
+    M5.delay(40);
+    play_tone(1397.0f, 60);  // F6
 }

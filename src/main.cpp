@@ -50,16 +50,17 @@ void setup()
         ESP_LOGW(TAG, "Failed to draw embedded splash image");
     }
 
-    // Startup sound sequence (G6 → C8 - perfect 5th "powering up")
-    const uint32_t tone1 = 100;
-    const uint32_t gap = 60;
-    const uint32_t tone2 = 120;
+    // Startup sound sequence (G6 → D7 → C8 - "Pow-er-Up!")
+    const uint32_t tone1 = 80;
+    const uint32_t tone2 = 80;
+    const uint32_t tone3 = 120;
 
     M5.Speaker.tone(1568.0f, tone1);  // G6
     M5.delay(tone1);
-    M5.delay(gap);
-    M5.Speaker.tone(4186.0f, tone2);  // C8
-    const uint32_t elapsed = tone1 + gap + tone2;
+    M5.Speaker.tone(2349.0f, tone2);  // D7
+    M5.delay(tone2);
+    M5.Speaker.tone(4186.0f, tone3);  // C8
+    const uint32_t elapsed = tone1 + tone2 + tone3;
     if (elapsed < 2000)
     {
         M5.delay(2000 - elapsed);

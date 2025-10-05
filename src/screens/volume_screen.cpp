@@ -100,8 +100,12 @@ void VolumeScreen::handle_button_click() {
     // Save to NVS
     storage::NVSStorage::instance().save_volume(value_);
 
-    // Play confirmation tone (C#7 - settings action)
-    play_tone(2217.0f, 100);
+    // Play confirmation tone (B6 → C7 → B6 wobble - playful volume saved)
+    play_tone(1976.0f, 60);  // B6
+    M5.delay(40);
+    play_tone(2093.0f, 60);  // C7
+    M5.delay(40);
+    play_tone(1976.0f, 70);  // B6
 
     // Return to game active screen
     ScreenManager::instance().transition_to(&GameActiveScreen::instance());

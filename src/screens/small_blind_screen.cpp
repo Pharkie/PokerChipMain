@@ -1,5 +1,6 @@
 #include "small_blind_screen.hpp"
 
+#include <M5Unified.hpp>
 #include <algorithm>
 #include <esp_log.h>
 #include "game_state.hpp"
@@ -116,8 +117,10 @@ void SmallBlindScreen::handle_button_click() {
     // Save to game state (big_blind automatically set to 2x small_blind)
     GameState::instance().set_small_blind(value_);
 
-    // Play confirmation tone (D7 - start of progression)
-    play_tone(2349.0f, 120);
+    // Play confirmation tone (D7 → D7 double beep - start of progression)
+    play_tone(2349.0f, 80);
+    M5.delay(60);
+    play_tone(2349.0f, 80);
 
     // Transition to RoundMinutesScreen
     ScreenManager::instance().transition_to(&RoundMinutesScreen::instance());
@@ -146,12 +149,18 @@ void SmallBlindScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
     set_visible(ui().info_close_button, true);
-    play_tone(2637.0f, 80);  // E7 - pleasant opening tone
+    // F#7 → A7 chirp (playful upward)
+    play_tone(2794.0f, 40);  // F#7
+    M5.delay(40);
+    play_tone(3520.0f, 60);  // A7
 }
 
 void SmallBlindScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
     set_visible(ui().info_close_button, false);
-    play_tone(1976.0f, 80);  // B6 - lower closing tone
+    // A6 → F6 chirp (playful downward)
+    play_tone(1760.0f, 40);  // A6
+    M5.delay(40);
+    play_tone(1397.0f, 60);  // F6
 }

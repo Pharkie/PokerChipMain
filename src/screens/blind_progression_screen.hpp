@@ -31,9 +31,8 @@ private:
     static constexpr int kStartingStack = 2000;
 
     // Sound feedback tones
-    static constexpr float kToneUp = 4186.0f;      // C8 (high = increment)
-    static constexpr float kToneDown = 2093.0f;    // C7 (low = decrement)
-    static constexpr float kToneBoundary = 1568.0f; // G6 (lower = blocked)
+    static constexpr float kToneUp = 2637.0f;      // E7 (high = increment)
+    static constexpr float kToneDown = 1760.0f;    // A6 (low = decrement)
     static constexpr uint32_t kToneDuration = 60;  // milliseconds (quick feedback)
 
     int selection_ = 0;  // Default to STANDARD (now first item)

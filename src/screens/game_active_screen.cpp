@@ -119,7 +119,7 @@ void GameActiveScreen::handle_encoder(int diff) {
         }
 
         update_menu_selection();
-        play_tone(1760.0f, 40);  // A6 - quick browsing
+        play_tone(2960.0f, 40);  // G7 - retro blip
     }
 }
 
@@ -131,7 +131,10 @@ void GameActiveScreen::handle_button_click() {
         // Show menu and pause
         paused_ = true;
         show_menu();
-        play_tone(1397.0f, 80);  // F6 - entering sub-menu
+        // D6 → A6 arpeggio (retro menu open)
+        play_tone(1175.0f, 50);  // D6
+        M5.delay(40);
+        play_tone(1760.0f, 70);  // A6
     }
 }
 
@@ -312,16 +315,21 @@ void GameActiveScreen::update_paused_note() {
 
 void GameActiveScreen::execute_menu_action() {
     ESP_LOGI(kLogTag, "Menu action: %d", menu_selection_);
-    play_tone(2349.0f, 100);  // D7 - action confirmed
 
     switch (menu_selection_) {
         case 0:  // Resume
+            ESP_LOGI(kLogTag, "Resuming game");
+            // A6 → F6 downward chirp (dismiss menu)
+            play_tone(1760.0f, 40);
+            M5.delay(30);
+            play_tone(1397.0f, 60);
             paused_ = false;
             hide_menu();
             break;
 
         case 1:  // Skip Round
             ESP_LOGI(kLogTag, "Skipping to next round");
+            // No confirmation sound - round transition tones will play
             paused_ = false;
             hide_menu();
             advance_round();
@@ -329,6 +337,12 @@ void GameActiveScreen::execute_menu_action() {
 
         case 2:  // Volume
             ESP_LOGI(kLogTag, "Opening volume screen");
+            // C7 → E7 → G7 arpeggio (action executed)
+            play_tone(2093.0f, 50);  // C7
+            M5.delay(40);
+            play_tone(2637.0f, 50);  // E7
+            M5.delay(40);
+            play_tone(2960.0f, 70);  // G7
             paused_ = false;
             hide_menu();
             ScreenManager::instance().transition_to(&VolumeScreen::instance());
@@ -336,6 +350,12 @@ void GameActiveScreen::execute_menu_action() {
 
         case 3:  // New Game
             ESP_LOGI(kLogTag, "Resetting to small blind screen");
+            // C7 → E7 → G7 arpeggio (action executed)
+            play_tone(2093.0f, 50);  // C7
+            M5.delay(40);
+            play_tone(2637.0f, 50);  // E7
+            M5.delay(40);
+            play_tone(2960.0f, 70);  // G7
             GameState::instance().reset();
             ScreenManager::instance().transition_to(&SmallBlindScreen::instance());
             break;
@@ -352,7 +372,10 @@ void GameActiveScreen::menu_button_clicked_cb(lv_event_t* e) {
     if (screen && !screen->paused_) {
         screen->paused_ = true;
         screen->show_menu();
-        screen->play_tone(1397.0f, 80);  // F6 - entering sub-menu
+        // D6 → A6 arpeggio (retro menu open)
+        screen->play_tone(1175.0f, 50);  // D6
+        M5.delay(40);
+        screen->play_tone(1760.0f, 70);  // A6
     }
 }
 
