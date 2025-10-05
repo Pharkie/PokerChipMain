@@ -236,6 +236,11 @@ void GameActiveScreen::play_round_transition_tones() {
 
 void GameActiveScreen::show_menu() {
     set_visible(ui().menu_overlay, true);
+    set_visible(ui().menu_item_resume, true);
+    set_visible(ui().menu_item_reset, true);
+    set_visible(ui().menu_item_skip, true);
+    set_visible(ui().menu_item_poweroff, true);
+    set_visible(ui().menu_paused_note, true);
     menu_selection_ = 0;  // Default to Resume
     update_menu_selection();
     update_paused_note();
@@ -243,6 +248,11 @@ void GameActiveScreen::show_menu() {
 
 void GameActiveScreen::hide_menu() {
     set_visible(ui().menu_overlay, false);
+    set_visible(ui().menu_item_resume, false);
+    set_visible(ui().menu_item_reset, false);
+    set_visible(ui().menu_item_skip, false);
+    set_visible(ui().menu_item_poweroff, false);
+    set_visible(ui().menu_paused_note, false);
 }
 
 void GameActiveScreen::update_menu_selection() {
@@ -254,10 +264,18 @@ void GameActiveScreen::update_menu_selection() {
         ui().menu_item_poweroff
     };
 
+    int current_round = GameState::instance().current_round();
+    int next_round = current_round + 1;
+
+    char resume_label[32];
+    char skip_label[32];
+    snprintf(resume_label, sizeof(resume_label), "Resume round %d", current_round);
+    snprintf(skip_label, sizeof(skip_label), "Skip to round %d", next_round);
+
     const char* labels[] = {
-        "Resume",
+        resume_label,
+        skip_label,
         "New Game",
-        "Skip Round",
         "Power Off"
     };
 
@@ -295,17 +313,17 @@ void GameActiveScreen::execute_menu_action() {
             hide_menu();
             break;
 
-        case 1:  // Reset
-            ESP_LOGI(kLogTag, "Resetting to small blind screen");
-            GameState::instance().reset();
-            ScreenManager::instance().transition_to(&SmallBlindScreen::instance());
-            break;
-
-        case 2:  // Skip Round
+        case 1:  // Skip Round
             ESP_LOGI(kLogTag, "Skipping to next round");
             paused_ = false;
             hide_menu();
             advance_round();
+            break;
+
+        case 2:  // New Game
+            ESP_LOGI(kLogTag, "Resetting to small blind screen");
+            GameState::instance().reset();
+            ScreenManager::instance().transition_to(&SmallBlindScreen::instance());
             break;
 
         case 3:  // Power Off

@@ -49,11 +49,18 @@ void SmallBlindScreen::on_enter() {
     // Setup down arrow
     lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -4);
 
-    // Show info button
+    // Show info button (only on this screen)
     set_visible(ui().info_button, true);
     lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
+}
+
+void SmallBlindScreen::on_exit() {
+    // Hide info button when leaving this screen
+    set_visible(ui().info_button, false);
+    set_visible(ui().info_overlay, false);
+    set_visible(ui().info_close_button, false);
 }
 
 void SmallBlindScreen::handle_encoder(int diff) {
@@ -124,11 +131,13 @@ void SmallBlindScreen::info_overlay_clicked_cb(lv_event_t* e) {
 void SmallBlindScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
+    set_visible(ui().info_close_button, true);
     play_tone(1500.0f, 80);
 }
 
 void SmallBlindScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
+    set_visible(ui().info_close_button, false);
     play_tone(1200.0f, 80);
 }

@@ -67,19 +67,16 @@ void BlindProgressionScreen::handle_encoder(int diff) {
     int prev_selection = selection_;
     selection_ += diff;
 
-    // Wrap around
+    // Wrap around (all choices are valid, no boundaries)
     if (selection_ < 0) {
         selection_ = kOptionCount - 1;
-        play_tone(kToneBoundary, kToneDuration);
     } else if (selection_ >= kOptionCount) {
         selection_ = 0;
-        play_tone(kToneBoundary, kToneDuration);
-    } else {
-        // Normal selection change
-        play_tone(diff > 0 ? kToneUp : kToneDown, kToneDuration);
     }
 
     if (selection_ != prev_selection) {
+        // Play consistent tone for any valid selection change
+        play_tone(diff > 0 ? kToneUp : kToneDown, kToneDuration);
         update_display();
         ESP_LOGI(kLogTag, "Selection changed to: %s", kNames[selection_]);
     }

@@ -17,10 +17,8 @@ struct Handles
     lv_obj_t *small_blind_active = nullptr;
     lv_obj_t *elapsed_mins = nullptr;
     lv_obj_t *big_blind_active = nullptr;
-    lv_obj_t *mins_label = nullptr;
     lv_obj_t *elapsed_secs = nullptr;
     lv_obj_t *timer_colon = nullptr;
-    lv_obj_t *secs_label = nullptr;
     lv_obj_t *active_small_blind_label = nullptr;
     lv_obj_t *active_big_blind_label = nullptr;
     lv_obj_t *focus_proxy = nullptr;

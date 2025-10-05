@@ -11,10 +11,7 @@ namespace pins {
     /// Button A physical button on device (active low with internal pullup)
     constexpr gpio_num_t BUTTON_A = GPIO_NUM_42;
 
-    /// Rotary encoder pins (handled by PCNT peripheral - see encoder.cpp)
-    /// Note: Actual pin config is in encoder_input.cpp, these are for reference
-    // constexpr gpio_num_t ENCODER_A = GPIO_NUM_XX;  // TODO: Document encoder pins
-    // constexpr gpio_num_t ENCODER_B = GPIO_NUM_XX;
+    // Note: Rotary encoder (GPIO 40/41) is configured in m5dial_lvgl component
 }
 
 /// Button timing configuration

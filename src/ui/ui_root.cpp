@@ -104,11 +104,6 @@ void ui_init()
     apply_label_style(g_handles.big_blind_active, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
     lv_obj_set_pos(g_handles.big_blind_active, 71, 121);
 
-    g_handles.mins_label = lv_label_create(g_handles.screen);
-    lv_label_set_text(g_handles.mins_label, "mins");
-    apply_label_style(g_handles.mins_label, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
-    lv_obj_set_pos(g_handles.mins_label, 90, 218);
-
     g_handles.elapsed_secs = lv_label_create(g_handles.screen);
     lv_label_set_text(g_handles.elapsed_secs, "00");
     apply_label_style(g_handles.elapsed_secs, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
@@ -119,11 +114,6 @@ void ui_init()
     lv_label_set_text(g_handles.timer_colon, ":");
     apply_label_style(g_handles.timer_colon, lv_color_hex(0xFFFFFF), &lv_font_montserrat_48);
     lv_obj_align(g_handles.timer_colon, LV_ALIGN_CENTER, 0, 50);
-
-    g_handles.secs_label = lv_label_create(g_handles.screen);
-    lv_label_set_text(g_handles.secs_label, "secs");
-    apply_label_style(g_handles.secs_label, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
-    lv_obj_set_pos(g_handles.secs_label, 129, 218);
 
     g_handles.active_small_blind_label = lv_label_create(g_handles.screen);
     lv_label_set_text(g_handles.active_small_blind_label, "Small blind");

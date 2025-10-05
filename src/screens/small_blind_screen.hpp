@@ -12,6 +12,7 @@ public:
 
     // Screen interface implementation
     void on_enter() override;
+    void on_exit() override;
     void handle_encoder(int diff) override;
     void handle_button_click() override;
 

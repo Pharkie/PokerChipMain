@@ -118,6 +118,7 @@ src/
 ├── main.cpp                          # Entry point: setup() and loop()
 ├── app_main_bridge.cpp              # ESP-IDF bridge
 ├── hardware/                         # Hardware abstraction modules
+│   ├── config.hpp                    # Hardware constants (pins, timings)
 │   ├── button.hpp/cpp                # Debounced GPIO button (replaces M5.BtnA)
 │   └── encoder.hpp/cpp               # PCNT encoder wrapper
 ├── screens/                          # OOP screen architecture
@@ -125,17 +126,16 @@ src/
 │   ├── screen_manager.hpp/cpp        # Singleton screen dispatcher
 │   ├── small_blind_screen.hpp/cpp    # Config screen 1
 │   ├── round_minutes_screen.hpp/cpp  # Config screen 2
+│   ├── blind_progression_screen.hpp/cpp  # Config screen 3
 │   └── game_active_screen.hpp/cpp    # Active game timer
 ├── ui/
-│   ├── ui_root.cpp                   # Main UI container and widget handles
-│   ├── ui_root.hpp
+│   ├── ui_root.cpp                   # Widget initialization and groups
+│   ├── ui_root.hpp                   # Widget handles and group management
 │   ├── ui_assets.cpp                 # Asset loading (images, fonts)
 │   └── ui_assets.hpp
 ├── input/
 │   └── encoder_input.cpp             # Rotary encoder → LVGL integration
-├── tasks/
-│   └── app_tasks.cpp                 # Main app coordination
-├── game_state.hpp/cpp                # Shared game state singleton
+├── game_state.hpp/cpp                # Encapsulated game state singleton
 └── images/
     ├── riccy.png                     # Boot splash image
     └── riccy_png.S                   # Embedded binary asset
@@ -150,9 +150,10 @@ src/
   - Encoder module using hardware PCNT peripheral
   - Speaker/buzzer tones via M5.Speaker.tone() directly
 - **OOP Screen Architecture**:
-  - Abstract Screen base class with lifecycle hooks
+  - Abstract Screen base class with lifecycle hooks and modal overlay support
   - ScreenManager singleton for screen transitions
-  - GameState singleton for shared game data
+  - GameState singleton with encapsulated fields and validation
+  - Widget group system for declarative UI management
 - **Small Blind Screen**:
   - Rotary encoder adjusts value (25-200 in steps of 25)
   - Sound feedback: A7 (up), F7 (down), G#6 (boundary)
@@ -181,6 +182,10 @@ src/
   - Optimized for 240x240 circular display
   - Menu button centered at bottom for visibility
   - Proper spacing for 48pt fonts
+- **Info Overlay System**:
+  - Tap "i" button to view upcoming blind schedule
+  - Modal overlay blocks underlying screen interactions
+  - Close button positioned at (130, 20) for visibility
 
 ### ⚠️ Known Limitations
 - Settings menu item is placeholder (not implemented)
@@ -199,9 +204,16 @@ constexpr float kToneBoundary = 1661.0f; // G#6
 constexpr uint32_t kToneDuration = 120;  // milliseconds
 ```
 
-### Hardware Pins ([src/tasks/app_tasks.cpp:19](src/tasks/app_tasks.cpp#L19))
+### Hardware Configuration ([src/hardware/config.hpp](src/hardware/config.hpp))
+All hardware constants centralized:
 ```cpp
-constexpr gpio_num_t kBtnAPin = GPIO_NUM_42;
+namespace hardware::config::pins {
+    constexpr gpio_num_t BUTTON_A = GPIO_NUM_42;
+}
+namespace hardware::config::button {
+    constexpr uint32_t DEBOUNCE_MS = 100;
+    constexpr uint32_t LONG_PRESS_MS = 2000;
+}
 ```
 
 ## Development Workflow
@@ -242,16 +254,29 @@ pio device monitor         # Serial monitor (115200 baud)
 3. Run app task polling (`app_tasks::tick()` - button detection)
 4. 5ms delay
 
-## UI Widget Handles
+## UI System
+
+### Widget Handles
 Available through `ui::get()` in [src/ui/ui_root.hpp](src/ui/ui_root.hpp):
-- `logo` - Boot logo
-- `page_title` - Screen title label
-- `big_number` - Large centered value display
-- `push_text` / `pushtext_bg` - Bottom prompt
-- `down_arrow` - Visual indicator
-- `small_blind_active` / `big_blind_active` - Active game displays
-- `elapsed_mins` / `elapsed_secs` - Timer displays
+- `logo`, `page_title`, `big_number` - Core display elements
+- `push_text`, `pushtext_bg`, `down_arrow` - Bottom prompt area
+- `small_blind_active`, `big_blind_active` - Active game displays
+- `elapsed_mins`, `elapsed_secs` - Timer displays
+- `menu_button`, `menu_overlay`, `menu_item_*` - Pause menu system
+- `info_button`, `info_overlay`, `info_close_button` - Info overlay system
 - `focus_proxy` - LVGL input group target
+
+### Widget Groups
+Declarative UI management via `ui::groups()`:
+- `config_common` - Shared widgets for configuration screens
+- `game_active` - Active game timer screen widgets
+- `menu` / `info` - Overlay widgets (managed by show_menu/hide_menu, show_info/hide_info)
+
+Helper functions:
+```cpp
+ui::show_group(ui::groups().config_common);  // Show all widgets in group
+ui::hide_all_groups();  // Hide all managed groups
+```
 
 ## Input System
 
@@ -274,41 +299,29 @@ Available through `ui::get()` in [src/ui/ui_root.hpp](src/ui/ui_root.hpp):
 2. **Button A press** → GPIO polling in `hardware::Button::update()` → debounce logic → short/long press detection → registered callbacks
 3. **Touch events** → M5.Touch I2C driver → LVGL pointer indev → LVGL event callbacks (e.g., `LV_EVENT_CLICKED` on menu button/items)
 
+## Architecture Design Principles
+
+### Memory Management
+- **Static allocation preferred** - No heap allocations in main loop or hardware modules
+- **Widget groups** - Declarative UI management, reduces code duplication
+- **Global widget pool** - More memory-efficient than LVGL screen objects per app screen
+
+### State Management
+- **Single source of truth** - Use LVGL widget visibility instead of duplicate boolean flags
+- **Encapsulation** - GameState uses private fields with validated setters
+- **Modal overlays** - `is_modal_blocking()` helper prevents underlying screen input
+
+### Hardware Abstraction
+- **Keep M5Unified** for display, touch, speaker, power (where it works)
+- **Extend with custom modules** for button (GPIO polling) and encoder (PCNT)
+- **Centralized config** - All hardware constants in `hardware/config.hpp`
+
 ## Notes
 - Repository must be kept outside cloud-synced folders (Dropbox, iCloud) to avoid ESP-IDF build issues
 - Avoid spaces in project path
 - LVGL 9.x required (earlier versions incompatible)
 - Custom `m5dial_lvgl` component handles display driver and touch/encoder integration
 - Git branch: `main` (no separate main branch configured)
-
-## Architecture Decision: Why We Keep M5Unified
-
-**TL;DR**: M5Unified stays because it provides mature, tested display/touch drivers. We extend it with custom hardware modules where needed (button debouncing, encoder PCNT).
-
-### What Works Well
-✅ **Display**: M5GFX via M5.Display.* is mature and handles GC9A01 LCD perfectly
-✅ **Touch**: FT3267 touchscreen driver via M5.Touch.* works reliably
-✅ **Speaker**: M5.Speaker.tone() provides clean PWM buzzer control (GPIO3)
-✅ **Power**: M5.Power.powerOff() handles GPIO46 control correctly
-
-### What Doesn't Work
-❌ **Button_Class API**: `M5.BtnA.wasClicked()` is non-functional on M5Stack Dial (StampS3 hardware incompatibility)
-⚠️ **Encoder API**: M5Unified's encoder support exists but is less efficient than direct PCNT hardware access
-
-### Our Solution
-- **Keep M5Unified** for display, touch, speaker, power (where it works well)
-- **Extend with hardware modules** for button (GPIO polling) and encoder (PCNT)
-- **Result**: Best of both worlds - mature drivers + custom optimizations
-
-### Why Not Remove M5Unified?
-Removing M5Unified would require:
-- Rewriting GC9A01 SPI display driver (~300 lines)
-- Rewriting FT3267 I2C touch driver (~200 lines)
-- Implementing LEDC PWM buzzer control (~50 lines)
-- High risk of DMA timing bugs, SPI speed issues, touch calibration problems
-- **Estimated effort**: 6-8 hours with significant debugging risk
-
-**Conclusion**: Pragmatic architecture wins. Use M5Unified where it works, extend where needed.
 
 ## License
 Creative Commons Attribution-NonCommercial 4.0 International
