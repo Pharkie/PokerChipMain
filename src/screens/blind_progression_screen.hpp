@@ -31,10 +31,10 @@ private:
     static constexpr int kStartingStack = 2000;
 
     // Sound feedback tones
-    static constexpr float kToneUp = 3520.0f;      // A7
-    static constexpr float kToneDown = 2793.0f;    // F7
-    static constexpr float kToneBoundary = 1661.0f; // G#6
-    static constexpr uint32_t kToneDuration = 120;
+    static constexpr float kToneUp = 4186.0f;      // C8 (high = increment)
+    static constexpr float kToneDown = 2093.0f;    // C7 (low = decrement)
+    static constexpr float kToneBoundary = 1568.0f; // G6 (lower = blocked)
+    static constexpr uint32_t kToneDuration = 60;  // milliseconds (quick feedback)
 
     int selection_ = 0;  // Default to STANDARD (now first item)
     char game_time_buffer_[32];  // Buffer for dynamic game time string

@@ -84,7 +84,7 @@ void RoundMinutesScreen::handle_encoder(int diff) {
         play_tone(step > 0 ? kToneUp : kToneDown, kToneDuration);
         ESP_LOGI(kLogTag, "Round minutes -> %d", value_);
     } else if (boundary) {
-        play_tone(kToneBoundary, kToneDuration);
+        play_tone(kToneBoundary, 80);  // Boundary slightly longer
         ESP_LOGI(kLogTag, "Boundary hit at %d", value_);
     }
 }
@@ -95,8 +95,8 @@ void RoundMinutesScreen::handle_button_click() {
     // Save to game state
     GameState::instance().set_round_minutes(value_);
 
-    // Play confirmation tone (C8)
-    play_tone(4186.0f, 120);
+    // Play confirmation tone (F7 - build excitement)
+    play_tone(2793.0f, 120);
 
     // Transition to Blind Progression Screen
     ScreenManager::instance().transition_to(&BlindProgressionScreen::instance());
@@ -124,11 +124,11 @@ void RoundMinutesScreen::info_overlay_clicked_cb(lv_event_t* e) {
 void RoundMinutesScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
-    play_tone(kToneUp, 80);  // A7 - consistent with encoder up
+    play_tone(2637.0f, 80);  // E7 - pleasant opening tone
 }
 
 void RoundMinutesScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
-    play_tone(kToneDown, 80);  // F7 - consistent with encoder down
+    play_tone(1976.0f, 80);  // B6 - lower closing tone
 }

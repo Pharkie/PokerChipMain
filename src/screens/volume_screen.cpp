@@ -89,7 +89,7 @@ void VolumeScreen::handle_encoder(int diff) {
         play_tone(step > 0 ? kToneUp : kToneDown, kToneDuration);
         ESP_LOGI(kLogTag, "Volume -> %d", value_);
     } else if (boundary) {
-        play_tone(kToneBoundary, kToneDuration);
+        play_tone(kToneBoundary, 80);  // Boundary slightly longer
         ESP_LOGI(kLogTag, "Boundary hit at %d", value_);
     }
 }
@@ -100,8 +100,8 @@ void VolumeScreen::handle_button_click() {
     // Save to NVS
     storage::NVSStorage::instance().save_volume(value_);
 
-    // Play confirmation tone (G7)
-    play_tone(2960.0f, 120);
+    // Play confirmation tone (C#7 - settings action)
+    play_tone(2217.0f, 100);
 
     // Return to game active screen
     ScreenManager::instance().transition_to(&GameActiveScreen::instance());

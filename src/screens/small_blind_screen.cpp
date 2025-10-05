@@ -99,7 +99,7 @@ void SmallBlindScreen::handle_encoder(int diff) {
         play_tone(step > 0 ? kToneUp : kToneDown, kToneDuration);
         ESP_LOGI(kLogTag, "Small blind -> %d", value_);
     } else if (boundary) {
-        play_tone(kToneBoundary, kToneDuration);
+        play_tone(kToneBoundary, 80);  // Boundary slightly longer
         ESP_LOGI(kLogTag, "Boundary hit at %d", value_);
     }
 }
@@ -116,8 +116,8 @@ void SmallBlindScreen::handle_button_click() {
     // Save to game state (big_blind automatically set to 2x small_blind)
     GameState::instance().set_small_blind(value_);
 
-    // Play confirmation tone (G7)
-    play_tone(2960.0f, 120);
+    // Play confirmation tone (D7 - start of progression)
+    play_tone(2349.0f, 120);
 
     // Transition to RoundMinutesScreen
     ScreenManager::instance().transition_to(&RoundMinutesScreen::instance());
@@ -146,12 +146,12 @@ void SmallBlindScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
     set_visible(ui().info_overlay, true);
     set_visible(ui().info_close_button, true);
-    play_tone(kToneUp, 80);  // A7 - consistent with encoder up
+    play_tone(2637.0f, 80);  // E7 - pleasant opening tone
 }
 
 void SmallBlindScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
     set_visible(ui().info_overlay, false);
     set_visible(ui().info_close_button, false);
-    play_tone(kToneDown, 80);  // F7 - consistent with encoder down
+    play_tone(1976.0f, 80);  // B6 - lower closing tone
 }

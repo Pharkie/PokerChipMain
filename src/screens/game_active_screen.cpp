@@ -10,15 +10,15 @@
 namespace {
 constexpr const char* kLogTag = "game_active_screen";
 
-// Musical scale for round transitions (chromatic progression)
+// Round transitions - ascending tension with tritone resolution!
 constexpr float kTransitionTones[] = {
-    2093.0f,  // C7
-    2217.0f,  // C#7
-    2349.0f,  // D7
-    2489.0f   // D#7
+    2093.0f,  // C7   (base)
+    2489.0f,  // D#7  (minor 3rd up - tense)
+    2960.0f,  // G7   (tritone from C# - maximum tension!)
+    3520.0f   // A7   (resolution - higher climax!)
 };
 constexpr size_t kTransitionToneCount = sizeof(kTransitionTones) / sizeof(kTransitionTones[0]);
-constexpr uint32_t kTransitionToneDuration = 150;  // milliseconds
+constexpr uint32_t kTransitionToneDuration = 130;  // milliseconds
 }
 
 GameActiveScreen& GameActiveScreen::instance() {
@@ -119,7 +119,7 @@ void GameActiveScreen::handle_encoder(int diff) {
         }
 
         update_menu_selection();
-        play_tone(2000.0f, 50);  // Selection beep
+        play_tone(1760.0f, 40);  // A6 - quick browsing
     }
 }
 
@@ -131,7 +131,7 @@ void GameActiveScreen::handle_button_click() {
         // Show menu and pause
         paused_ = true;
         show_menu();
-        play_tone(1500.0f, 100);
+        play_tone(1397.0f, 80);  // F6 - entering sub-menu
     }
 }
 
@@ -312,7 +312,7 @@ void GameActiveScreen::update_paused_note() {
 
 void GameActiveScreen::execute_menu_action() {
     ESP_LOGI(kLogTag, "Menu action: %d", menu_selection_);
-    play_tone(2500.0f, 100);
+    play_tone(2349.0f, 100);  // D7 - action confirmed
 
     switch (menu_selection_) {
         case 0:  // Resume
@@ -352,7 +352,7 @@ void GameActiveScreen::menu_button_clicked_cb(lv_event_t* e) {
     if (screen && !screen->paused_) {
         screen->paused_ = true;
         screen->show_menu();
-        screen->play_tone(1500.0f, 100);
+        screen->play_tone(1397.0f, 80);  // F6 - entering sub-menu
     }
 }
 
