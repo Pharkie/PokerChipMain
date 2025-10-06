@@ -53,12 +53,11 @@ void BlindProgressionScreen::create_widgets() {
 
     // Bottom button
     bottom_button_ = lv_button_create(scr);
+    lv_obj_clear_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_remove_flag(bottom_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_bottom_button(bottom_button_);
     lv_obj_set_pos(bottom_button_, 0, 200);
-    lv_obj_add_flag(bottom_button_, LV_OBJ_FLAG_IGNORE_LAYOUT);
-    lv_obj_clear_flag(bottom_button_, LV_OBJ_FLAG_SNAPPABLE);
-    lv_obj_remove_state(bottom_button_, LV_STATE_FOCUS_KEY | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(bottom_button_, 0, LV_PART_MAIN);
 
     confirm_label_ = lv_label_create(bottom_button_);
     ui::styles::apply_bottom_button_label(confirm_label_);

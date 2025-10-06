@@ -32,6 +32,9 @@ namespace ui::styles
         lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN);
         lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN);
         lv_obj_set_style_radius(obj, 0, LV_PART_MAIN);
+        lv_obj_set_style_outline_width(obj, 0, LV_PART_MAIN);
+        lv_obj_set_style_outline_width(obj, 0, LV_STATE_FOCUS_KEY);
+        lv_obj_set_style_outline_width(obj, 0, LV_STATE_FOCUSED);
     }
 
     void apply_bottom_button_label(lv_obj_t *obj)
@@ -47,6 +50,9 @@ namespace ui::styles
         lv_obj_set_style_radius(obj, 17, LV_PART_MAIN);
         lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN);
         lv_obj_set_style_border_color(obj, lv_color_hex(0x999999), LV_PART_MAIN);
+        lv_obj_set_style_outline_width(obj, 0, LV_PART_MAIN);
+        lv_obj_set_style_outline_width(obj, 0, LV_STATE_FOCUS_KEY);
+        lv_obj_set_style_outline_width(obj, 0, LV_STATE_FOCUSED);
     }
 
     void apply_overlay_bg(lv_obj_t *obj)

@@ -53,6 +53,7 @@ private:
     static constexpr uint32_t kTickIntervalMs = 1000;  // 1 second
     static constexpr int kMaxBlind = 9999;             // Failsafe
     static constexpr int kMenuItemCount = 5;
+    static constexpr int kPowerOffLabelYOffset = -20;  // Y offset for power off label
 
     void update_timer_display();
     void update_blind_display();

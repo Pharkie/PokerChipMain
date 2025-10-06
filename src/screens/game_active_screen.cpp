@@ -157,7 +157,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_t* poweroff_label = lv_label_create(menu_item_poweroff_);
     lv_label_set_text(poweroff_label, "Power Off");
     lv_obj_set_style_text_align(poweroff_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(poweroff_label, LV_ALIGN_TOP_MID, 0, 4);
+    lv_obj_align(poweroff_label, LV_ALIGN_CENTER, 0, kPowerOffLabelYOffset);
 
     // Hide menu initially
     lv_obj_add_flag(menu_overlay_, LV_OBJ_FLAG_HIDDEN);
@@ -405,7 +405,13 @@ void GameActiveScreen::update_menu_selection() {
 
         // Update label text
         lv_label_set_text(label, labels[i]);
-        lv_obj_center(label);  // Re-center after text change
+
+        // Re-center after text change (except power off which has custom position)
+        if (i == 4) {
+            lv_obj_align(label, LV_ALIGN_CENTER, 0, kPowerOffLabelYOffset);
+        } else {
+            lv_obj_center(label);
+        }
 
         // Update colors based on selection
         if (i == menu_selection_) {

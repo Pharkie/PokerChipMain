@@ -41,12 +41,11 @@ void SmallBlindScreen::create_widgets() {
 
     // Bottom button
     bottom_button_ = lv_button_create(scr);
+    lv_obj_clear_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_remove_flag(bottom_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_bottom_button(bottom_button_);
     lv_obj_set_pos(bottom_button_, 0, 200);
-    lv_obj_add_flag(bottom_button_, LV_OBJ_FLAG_IGNORE_LAYOUT);
-    lv_obj_clear_flag(bottom_button_, LV_OBJ_FLAG_SNAPPABLE);
-    lv_obj_remove_state(bottom_button_, LV_STATE_FOCUS_KEY | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(bottom_button_, 0, LV_PART_MAIN);
 
     confirm_label_ = lv_label_create(bottom_button_);
     ui::styles::apply_bottom_button_label(confirm_label_);
@@ -55,12 +54,11 @@ void SmallBlindScreen::create_widgets() {
 
     // Info button (right side, vertically centered)
     info_button_ = lv_button_create(scr);
+    lv_obj_clear_flag(info_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(info_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_remove_flag(info_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_info_button(info_button_);
     lv_obj_set_pos(info_button_, 185, 103);
-    lv_obj_add_flag(info_button_, LV_OBJ_FLAG_IGNORE_LAYOUT);
-    lv_obj_clear_flag(info_button_, LV_OBJ_FLAG_SNAPPABLE);
-    lv_obj_remove_state(info_button_, LV_STATE_FOCUS_KEY | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(info_button_, 0, LV_PART_MAIN);
     lv_obj_t* info_label = lv_label_create(info_button_);
     lv_label_set_text(info_label, "i");
     lv_obj_set_style_text_color(info_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
@@ -110,12 +108,11 @@ void SmallBlindScreen::create_widgets() {
 
     // Info close button
     info_close_button_ = lv_button_create(info_overlay_);
+    lv_obj_clear_flag(info_close_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(info_close_button_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_remove_flag(info_close_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_bottom_button(info_close_button_);
     lv_obj_set_pos(info_close_button_, 0, 200);
-    lv_obj_add_flag(info_close_button_, LV_OBJ_FLAG_IGNORE_LAYOUT);
-    lv_obj_clear_flag(info_close_button_, LV_OBJ_FLAG_SNAPPABLE);
-    lv_obj_remove_state(info_close_button_, LV_STATE_FOCUS_KEY | LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_width(info_close_button_, 0, LV_PART_MAIN);
 
     info_close_label_ = lv_label_create(info_close_button_);
     ui::styles::apply_bottom_button_label(info_close_label_);
