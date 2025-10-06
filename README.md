@@ -9,9 +9,9 @@ Turn your M5Stack Dial into the heartbeat of your poker night. Spin the dial, se
 - **Configurable blinds** - Set starting small blind (25-200)
 - **Round timer** - Choose round length (5-45 minutes)
 - **Blind progression modes** - Standard (1.5x), Turbo (2x), or Relaxed (1.25x)
-- **Pause menu** - Resume, skip rounds, adjust volume, start new game
-- **Chip breakdown overlay** - Quick reference for starting stacks
-- **Audio feedback** - Musical tones for all interactions
+- **Pause menu** - Resume, skip round, adjust volume (remembers volume across boots via NVS), start new game
+- **Chip breakdown overlay** - Quick reference sheet for starting chips
+- **Audio feedback** - Beeps and boops for interactions
 
 ## Quick Start
 
