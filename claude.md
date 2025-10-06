@@ -323,6 +323,12 @@ ui::hide_all_groups();  // Hide all managed groups
 - Custom `m5dial_lvgl` component handles display driver and touch/encoder integration
 - Git branch: `main` (no separate main branch configured)
 
+## Code Style Guidelines
+- **NO change-tracking comments**: Never add comments like "// Moved down 8px from 191" or "// Extended to 90px (was 80)". These create maintenance burden and become stale immediately. The current state is what matters, not the history.
+- **Avoid dead code**: Remove unused widgets/variables immediately rather than leaving them with empty values
+- **Comments should explain WHY, not WHAT**: Focus on design intent (e.g., "// Created FIRST so it's behind the text (z-order)") rather than describing changes or movements
+- **Single source of truth for widget positioning**: ALL widget positions/sizes are defined ONCE in `ui_root.cpp`. Screen files should NEVER call `lv_obj_set_pos()`, `lv_obj_set_size()`, or `lv_obj_align()` on shared widgets. Screens only manage visibility (via widget groups) and event callbacks. If a widget needs screen-specific positioning, it should be a screen-local widget, not a shared one.
+
 ## License
 Creative Commons Attribution-NonCommercial 4.0 International
 Commercial use requires separate permission from project authors.

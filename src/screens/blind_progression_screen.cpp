@@ -37,23 +37,14 @@ void BlindProgressionScreen::on_enter() {
     lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, -30);
 
     // Setup push prompt background
-    lv_obj_set_width(ui().pushtext_bg, 240);
-    lv_obj_set_height(ui().pushtext_bg, 60);
-    lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
 
     // Setup push text
-    lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
-
-    // Setup down arrow
-    lv_obj_set_style_text_align(ui().down_arrow, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -8);
 
     // Update display with initial selection
     update_display();
 
     // Make push button touchable
-    lv_obj_add_event_cb(ui().pushtext_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().bottom_button_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
 
     ESP_LOGI(kLogTag, "Initial selection: %s", kNames[selection_]);
 }
@@ -62,7 +53,7 @@ void BlindProgressionScreen::on_exit() {
     ESP_LOGI(kLogTag, "Exiting screen");
 
     // Remove event callback to prevent duplicates on re-entry
-    lv_obj_remove_event_cb(ui().pushtext_bg, push_button_clicked_cb);
+    lv_obj_remove_event_cb(ui().bottom_button_bg, push_button_clicked_cb);
 
     // Restore original colors for reused widgets (small_blind_active, big_blind_active)
     lv_obj_set_style_text_color(ui().small_blind_active, lv_color_hex(0x00FF46), LV_PART_MAIN);

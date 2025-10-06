@@ -39,16 +39,8 @@ void SmallBlindScreen::on_enter() {
     update_display();
 
     // Setup push prompt background
-    lv_obj_set_width(ui().pushtext_bg, 240);
-    lv_obj_set_height(ui().pushtext_bg, 60);
-    lv_obj_align(ui().pushtext_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
 
     // Setup push text
-    lv_obj_set_style_text_align(ui().push_text, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().push_text, LV_ALIGN_BOTTOM_MID, 0, -24);
-
-    // Setup down arrow
-    lv_obj_align(ui().down_arrow, LV_ALIGN_BOTTOM_MID, 0, -4);
 
     // Show info button (only on this screen)
     set_visible(ui().info_button, true);
@@ -57,12 +49,12 @@ void SmallBlindScreen::on_enter() {
     lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
 
     // Make push button touchable
-    lv_obj_add_event_cb(ui().pushtext_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().bottom_button_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
 }
 
 void SmallBlindScreen::on_exit() {
     // Remove event callbacks to prevent duplicates on re-entry
-    lv_obj_remove_event_cb(ui().pushtext_bg, push_button_clicked_cb);
+    lv_obj_remove_event_cb(ui().bottom_button_bg, push_button_clicked_cb);
     lv_obj_remove_event_cb(ui().info_button, info_button_clicked_cb);
     lv_obj_remove_event_cb(ui().info_overlay, info_overlay_clicked_cb);
     lv_obj_remove_event_cb(ui().info_close_button, info_overlay_clicked_cb);

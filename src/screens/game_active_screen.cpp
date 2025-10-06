@@ -71,7 +71,7 @@ void GameActiveScreen::on_enter() {
     lv_obj_align(ui().timer_colon, LV_ALIGN_CENTER, 0, 25);
 
     // Register touch events for menu items
-    lv_obj_add_event_cb(ui().menu_button, menu_button_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(ui().bottom_button_bg, bottom_button_bg_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_resume, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_reset, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().menu_item_skip, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
@@ -187,6 +187,8 @@ void GameActiveScreen::update_blind_display() {
 void GameActiveScreen::update_round_title() {
     auto& game = GameState::instance();
     lv_label_set_text_fmt(ui().page_title, "Round %d", game.current_round());
+    // Make text white for visibility on dark banner
+    lv_obj_set_style_text_color(ui().page_title, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
 }
 
 void GameActiveScreen::advance_round() {
@@ -367,7 +369,7 @@ void GameActiveScreen::execute_menu_action() {
     }
 }
 
-void GameActiveScreen::menu_button_clicked_cb(lv_event_t* e) {
+void GameActiveScreen::bottom_button_bg_clicked_cb(lv_event_t* e) {
     GameActiveScreen* screen = static_cast<GameActiveScreen*>(lv_event_get_user_data(e));
     if (screen && !screen->paused_) {
         screen->paused_ = true;

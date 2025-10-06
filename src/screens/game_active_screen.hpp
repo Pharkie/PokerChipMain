@@ -41,6 +41,6 @@ private:
     void update_paused_note();
     void execute_menu_action();
 
-    static void menu_button_clicked_cb(lv_event_t* e);
+    static void bottom_button_bg_clicked_cb(lv_event_t* e);
     static void menu_item_clicked_cb(lv_event_t* e);
 };

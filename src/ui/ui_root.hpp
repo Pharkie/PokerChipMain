@@ -11,9 +11,10 @@ struct Handles
     lv_obj_t *logo = nullptr;
     lv_obj_t *big_number = nullptr;
     lv_obj_t *page_title = nullptr;
-    lv_obj_t *pushtext_bg = nullptr;
-    lv_obj_t *push_text = nullptr;
-    lv_obj_t *down_arrow = nullptr;
+    lv_obj_t *page_title_bg = nullptr;
+    lv_obj_t *bottom_button_bg = nullptr;
+    lv_obj_t *confirm_label = nullptr;
+    lv_obj_t *menu_label = nullptr;
     lv_obj_t *small_blind_active = nullptr;
     lv_obj_t *elapsed_mins = nullptr;
     lv_obj_t *big_blind_active = nullptr;
@@ -24,7 +25,6 @@ struct Handles
     lv_obj_t *focus_proxy = nullptr;
 
     // Menu system
-    lv_obj_t *menu_button = nullptr;
     lv_obj_t *menu_overlay = nullptr;
     lv_obj_t *menu_item_resume = nullptr;
     lv_obj_t *menu_item_reset = nullptr;
