@@ -61,6 +61,9 @@ struct WidgetGroups
     /// Mode (blind progression) screen widgets
     std::vector<lv_obj_t**> mode_screen;
 
+    /// Volume screen widgets (config_common without info_button)
+    std::vector<lv_obj_t**> volume_screen;
+
     /// Active game screen widgets
     std::vector<lv_obj_t**> game_active;
 

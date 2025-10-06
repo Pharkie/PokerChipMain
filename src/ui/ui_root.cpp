@@ -173,7 +173,8 @@ namespace ui
         lv_obj_set_style_bg_color(g_handles.menu_overlay, lv_color_black(), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(g_handles.menu_overlay, LV_OPA_90, LV_PART_MAIN);
         lv_obj_set_style_border_width(g_handles.menu_overlay, 0, LV_PART_MAIN);
-        lv_obj_clear_flag(g_handles.menu_overlay, LV_OBJ_FLAG_SCROLLABLE); // Disable scrolling
+        lv_obj_set_style_pad_all(g_handles.menu_overlay, 0, LV_PART_MAIN);
+        lv_obj_clear_flag(g_handles.menu_overlay, LV_OBJ_FLAG_SCROLLABLE);
 
         // "Paused MM:SS" label at top
         g_handles.menu_paused_note = lv_label_create(g_handles.menu_overlay);
@@ -251,6 +252,8 @@ namespace ui
         lv_obj_set_style_bg_color(g_handles.info_overlay, lv_color_black(), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(g_handles.info_overlay, LV_OPA_90, LV_PART_MAIN);
         lv_obj_set_style_border_width(g_handles.info_overlay, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_all(g_handles.info_overlay, 0, LV_PART_MAIN);
+        lv_obj_clear_flag(g_handles.info_overlay, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_add_flag(g_handles.info_overlay, LV_OBJ_FLAG_CLICKABLE);
 
         // Info title background banner (matches page_title_bg style)
@@ -319,7 +322,8 @@ namespace ui
             &g_handles.page_title_bg,
             &g_handles.big_number,
             &g_handles.bottom_button_bg,
-            &g_handles.confirm_label
+            &g_handles.confirm_label,
+            &g_handles.info_button
         };
 
         g_groups.mode_screen = {
@@ -328,6 +332,14 @@ namespace ui
             &g_handles.mode_name,
             &g_handles.mode_description,
             &g_handles.mode_game_time,
+            &g_handles.bottom_button_bg,
+            &g_handles.confirm_label
+        };
+
+        g_groups.volume_screen = {
+            &g_handles.page_title,
+            &g_handles.page_title_bg,
+            &g_handles.big_number,
             &g_handles.bottom_button_bg,
             &g_handles.confirm_label
         };
@@ -356,10 +368,9 @@ namespace ui
             &g_handles.menu_item_poweroff,
             &g_handles.menu_paused_note};
 
-        // Info overlay
+        // Info overlay (does NOT include info_button - that's part of screen groups)
         g_groups.info = {
             &g_handles.info_overlay,
-            &g_handles.info_button,
             &g_handles.info_title_bg,
             &g_handles.info_title,
             &g_handles.info_blue,
@@ -412,6 +423,7 @@ namespace ui
     {
         hide_group(g_groups.config_common);
         hide_group(g_groups.mode_screen);
+        hide_group(g_groups.volume_screen);
         hide_group(g_groups.game_active);
         // Note: menu and info overlays are NOT hidden here - they're managed separately
     }

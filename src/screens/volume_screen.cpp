@@ -22,9 +22,9 @@ void VolumeScreen::on_enter() {
     value_ = storage::NVSStorage::instance().load_volume(5);
     apply_volume();
 
-    // Show config screen widgets
+    // Show volume screen widgets (no info button)
     ui::hide_all_groups();
-    ui::show_group(ui::groups().config_common);
+    ui::show_group(ui::groups().volume_screen);
 
     // Setup title
     lv_label_set_text(ui().page_title, "Volume");

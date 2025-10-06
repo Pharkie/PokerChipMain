@@ -40,8 +40,7 @@ void SmallBlindScreen::on_enter() {
 
     // Setup push text
 
-    // Show info button (only on this screen)
-    set_visible(ui().info_button, true);
+    // Setup info button event (visibility managed by widget group)
     lv_obj_add_event_cb(ui().info_button, info_button_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().info_overlay, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(ui().info_close_button, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
