@@ -11,6 +11,8 @@ public:
     static VolumeScreen& instance();
 
     // Screen interface implementation
+    void create_widgets() override;
+    void destroy_widgets() override;
     void on_enter() override;
     void on_exit() override;
     void handle_encoder(int diff) override;
@@ -18,6 +20,13 @@ public:
 
 private:
     VolumeScreen() = default;
+
+    // Widget handles (no info overlay for this screen)
+    lv_obj_t* title_bg_ = nullptr;
+    lv_obj_t* title_ = nullptr;
+    lv_obj_t* big_number_ = nullptr;
+    lv_obj_t* bottom_button_ = nullptr;
+    lv_obj_t* confirm_label_ = nullptr;
 
     int value_ = 5;  // 0-10 scale
 

@@ -10,6 +10,14 @@ class Screen {
 public:
     virtual ~Screen() = default;
 
+    /// Create this screen's LVGL widgets.
+    /// Called before on_enter() during screen transition.
+    virtual void create_widgets() = 0;
+
+    /// Destroy this screen's LVGL widgets.
+    /// Called after on_exit() during screen transition.
+    virtual void destroy_widgets() = 0;
+
     /// Called when this screen becomes active.
     /// Use this to setup UI widgets and initialize state.
     virtual void on_enter() = 0;
@@ -48,5 +56,6 @@ protected:
 
     /// Check if a modal overlay is currently blocking input.
     /// Uses LVGL widget visibility as single source of truth.
-    bool is_modal_blocking() const;
+    /// Default implementation returns false (no modals).
+    virtual bool is_modal_blocking() const { return false; }
 };

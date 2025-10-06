@@ -5,6 +5,7 @@
 #include "screen_manager.hpp"
 #include "game_active_screen.hpp"
 #include "storage/nvs_storage.hpp"
+#include "ui/ui_styles.hpp"
 
 namespace {
 constexpr const char* kLogTag = "volume_screen";
@@ -15,40 +16,67 @@ VolumeScreen& VolumeScreen::instance() {
     return instance;
 }
 
+void VolumeScreen::create_widgets() {
+    ESP_LOGI(kLogTag, "Creating widgets");
+
+    lv_obj_t* scr = lv_scr_act();
+
+    // Title background banner
+    title_bg_ = lv_obj_create(scr);
+    ui::styles::apply_title_bg(title_bg_);
+    lv_obj_set_pos(title_bg_, -20, -10);
+
+    // Title
+    title_ = lv_label_create(scr);
+    ui::styles::apply_title_text(title_);
+    lv_obj_align(title_, LV_ALIGN_TOP_MID, 0, 28);
+    lv_label_set_text(title_, "Volume");
+
+    // Big number (volume level 0-10)
+    big_number_ = lv_label_create(scr);
+    ui::styles::apply_big_number(big_number_);
+    lv_obj_align(big_number_, LV_ALIGN_CENTER, 0, 0);
+
+    // Bottom button
+    bottom_button_ = lv_button_create(scr);
+    ui::styles::apply_bottom_button(bottom_button_);
+    lv_obj_set_pos(bottom_button_, 0, 200);
+
+    confirm_label_ = lv_label_create(bottom_button_);
+    ui::styles::apply_bottom_button_label(confirm_label_);
+    lv_label_set_text(confirm_label_, "Confirm");
+    lv_obj_align(confirm_label_, LV_ALIGN_CENTER, 0, -12);
+}
+
+void VolumeScreen::destroy_widgets() {
+    ESP_LOGI(kLogTag, "Destroying widgets");
+
+    if (bottom_button_) lv_obj_del(bottom_button_);
+    if (big_number_) lv_obj_del(big_number_);
+    if (title_) lv_obj_del(title_);
+    if (title_bg_) lv_obj_del(title_bg_);
+
+    title_bg_ = nullptr;
+    title_ = nullptr;
+    big_number_ = nullptr;
+    bottom_button_ = nullptr;
+    confirm_label_ = nullptr;
+}
+
 void VolumeScreen::on_enter() {
     ESP_LOGI(kLogTag, "Entering screen");
 
     // Load saved volume or use current value
     value_ = storage::NVSStorage::instance().load_volume(5);
     apply_volume();
-
-    // Show volume screen widgets (no info button)
-    ui::hide_all_groups();
-    ui::show_group(ui::groups().volume_screen);
-
-    // Setup title
-    lv_label_set_text(ui().page_title, "Volume");
-    lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-
-    // Setup big number display - 48pt purple font
-    lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_set_style_text_color(ui().big_number, lv_color_hex(0xFF00DC), LV_PART_MAIN);
-    lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     update_display();
 
-    // Setup push prompt background
-
-    // Setup push text (text already set to "Confirm" in ui_root.cpp)
-
-    // Make push button touchable
-    lv_obj_add_event_cb(ui().bottom_button_bg, push_button_clicked_cb, LV_EVENT_CLICKED, this);
+    // Setup event callback
+    lv_obj_add_event_cb(bottom_button_, push_button_clicked_cb, LV_EVENT_CLICKED, this);
 }
 
 void VolumeScreen::on_exit() {
-    ESP_LOGI(kLogTag, "Exiting screen");
-
-    // Remove event callback to prevent duplicates on re-entry
-    lv_obj_remove_event_cb(ui().bottom_button_bg, push_button_clicked_cb);
+    // Event callbacks will be destroyed with widgets
 }
 
 void VolumeScreen::handle_encoder(int diff) {
@@ -102,7 +130,7 @@ void VolumeScreen::handle_button_click() {
 }
 
 void VolumeScreen::update_display() {
-    lv_label_set_text_fmt(ui().big_number, "%d", value_);
+    lv_label_set_text_fmt(big_number_, "%d", value_);
 }
 
 void VolumeScreen::push_button_clicked_cb(lv_event_t* e) {

@@ -1,91 +1,21 @@
 #pragma once
 
 #include <lvgl.h>
-#include <vector>
 
 namespace ui
 {
+/// Minimal global UI handles - only used for boot splash and encoder input
 struct Handles
 {
-    lv_obj_t *screen = nullptr;
-    lv_obj_t *logo = nullptr;
-    lv_obj_t *big_number = nullptr;
-    lv_obj_t *page_title = nullptr;
-    lv_obj_t *page_title_bg = nullptr;
-    lv_obj_t *bottom_button_bg = nullptr;
-    lv_obj_t *confirm_label = nullptr;
-    lv_obj_t *menu_label = nullptr;
-    lv_obj_t *small_blind_active = nullptr;
-    lv_obj_t *elapsed_mins = nullptr;
-    lv_obj_t *big_blind_active = nullptr;
-    lv_obj_t *elapsed_secs = nullptr;
-    lv_obj_t *timer_colon = nullptr;
-    lv_obj_t *active_small_blind_label = nullptr;
-    lv_obj_t *active_big_blind_label = nullptr;
-    lv_obj_t *focus_proxy = nullptr;
-
-    // Mode (blind progression) screen
-    lv_obj_t *mode_name = nullptr;
-    lv_obj_t *mode_description = nullptr;
-    lv_obj_t *mode_game_time = nullptr;
-
-    // Menu system
-    lv_obj_t *menu_overlay = nullptr;
-    lv_obj_t *menu_item_resume = nullptr;
-    lv_obj_t *menu_item_reset = nullptr;
-    lv_obj_t *menu_item_skip = nullptr;
-    lv_obj_t *menu_item_volume = nullptr;
-    lv_obj_t *menu_item_poweroff = nullptr;
-    lv_obj_t *menu_paused_note = nullptr;
-
-    // Info system
-    lv_obj_t *info_button = nullptr;
-    lv_obj_t *info_overlay = nullptr;
-    lv_obj_t *info_title = nullptr;
-    lv_obj_t *info_title_bg = nullptr;
-    lv_obj_t *info_blue = nullptr;
-    lv_obj_t *info_white = nullptr;
-    lv_obj_t *info_red = nullptr;
-    lv_obj_t *info_stack = nullptr;
-    lv_obj_t *info_close_button = nullptr;
-    lv_obj_t *info_close_label = nullptr;
+    lv_obj_t *screen = nullptr;      // Main LVGL screen
+    lv_obj_t *logo = nullptr;        // Boot splash logo
+    lv_obj_t *focus_proxy = nullptr; // Encoder input target
 };
 
-/// Widget groups for efficient show/hide management
-/// Widgets are organized by which screens use them
-struct WidgetGroups
-{
-    /// Configuration screens common widgets (small blind, round minutes, volume)
-    std::vector<lv_obj_t**> config_common;
-
-    /// Mode (blind progression) screen widgets
-    std::vector<lv_obj_t**> mode_screen;
-
-    /// Volume screen widgets (config_common without info_button)
-    std::vector<lv_obj_t**> volume_screen;
-
-    /// Active game screen widgets
-    std::vector<lv_obj_t**> game_active;
-
-    /// Menu overlay widgets (not auto-managed - use show_menu/hide_menu)
-    std::vector<lv_obj_t**> menu;
-
-    /// Info overlay widgets (not auto-managed - use show_info/hide_info)
-    std::vector<lv_obj_t**> info;
-};
-
+/// Initialize UI system (creates screen, logo, and focus proxy)
 void ui_init();
+
+/// Get global UI handles (minimal - screens create their own widgets)
 const Handles &get();
-const WidgetGroups &groups();
-
-/// Show all widgets in a group
-void show_group(const std::vector<lv_obj_t**> &group);
-
-/// Hide all widgets in a group
-void hide_group(const std::vector<lv_obj_t**> &group);
-
-/// Hide all managed widget groups (config_common + game_active)
-/// Does NOT hide menu/info overlays (those are managed separately)
-void hide_all_groups();
 }
 

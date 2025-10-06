@@ -32,9 +32,11 @@ void ScreenManager::transition_to(Screen* next_screen) {
 
     if (current_ != nullptr) {
         current_->on_exit();
+        current_->destroy_widgets();
     }
 
     current_ = next_screen;
+    current_->create_widgets();
     current_->on_enter();
 }
 

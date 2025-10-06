@@ -11,13 +11,33 @@ public:
     static SmallBlindScreen& instance();
 
     // Screen interface implementation
+    void create_widgets() override;
+    void destroy_widgets() override;
     void on_enter() override;
     void on_exit() override;
     void handle_encoder(int diff) override;
     void handle_button_click() override;
+    bool is_modal_blocking() const override;
 
 private:
     SmallBlindScreen() = default;
+
+    // Widget handles
+    lv_obj_t* title_bg_ = nullptr;
+    lv_obj_t* title_ = nullptr;
+    lv_obj_t* big_number_ = nullptr;
+    lv_obj_t* bottom_button_ = nullptr;
+    lv_obj_t* confirm_label_ = nullptr;
+    lv_obj_t* info_button_ = nullptr;
+    lv_obj_t* info_overlay_ = nullptr;
+    lv_obj_t* info_title_bg_ = nullptr;
+    lv_obj_t* info_title_ = nullptr;
+    lv_obj_t* info_blue_ = nullptr;
+    lv_obj_t* info_white_ = nullptr;
+    lv_obj_t* info_red_ = nullptr;
+    lv_obj_t* info_stack_ = nullptr;
+    lv_obj_t* info_close_button_ = nullptr;
+    lv_obj_t* info_close_label_ = nullptr;
 
     int value_ = 25;
 
