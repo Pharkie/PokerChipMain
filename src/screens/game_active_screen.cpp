@@ -403,14 +403,15 @@ void GameActiveScreen::update_menu_selection() {
         lv_obj_t* label = lv_obj_get_child(items[i], 0);
         if (!label) continue;
 
+        // Update label text
+        lv_label_set_text(label, labels[i]);
+        lv_obj_center(label);  // Re-center after text change
+
+        // Update colors based on selection
         if (i == menu_selection_) {
-            lv_label_set_text(label, labels[i]);
             lv_obj_set_style_bg_color(items[i], lv_color_hex(0x0088FF), LV_PART_MAIN);
-            lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
         } else {
-            lv_label_set_text(label, labels[i]);
             lv_obj_set_style_bg_color(items[i], lv_color_hex(0x555555), LV_PART_MAIN);
-            lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
         }
     }
 }

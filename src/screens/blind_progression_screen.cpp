@@ -184,6 +184,12 @@ void BlindProgressionScreen::handle_encoder(int diff) {
 }
 
 void BlindProgressionScreen::handle_button_click() {
+    // If info overlay is visible, close it instead of confirming
+    if (is_modal_blocking()) {
+        hide_info();
+        return;
+    }
+
     ESP_LOGI(kLogTag, "Button clicked, selected: %s (multiplier: %.2f)",
              kNames[selection_], kMultipliers[selection_]);
 

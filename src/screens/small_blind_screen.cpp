@@ -194,6 +194,12 @@ void SmallBlindScreen::handle_encoder(int diff) {
 }
 
 void SmallBlindScreen::handle_button_click() {
+    // If info overlay is visible, close it instead of confirming
+    if (is_modal_blocking()) {
+        hide_info();
+        return;
+    }
+
     ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
 
     // Save to game state (big_blind automatically set to 2x small_blind)
