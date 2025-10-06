@@ -28,13 +28,11 @@ void BlindProgressionScreen::on_enter() {
     // Setup title - smaller font and higher position
     lv_label_set_text(ui().page_title, "Mode");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 20);
 
     // Setup big number display (option name) - use 24pt purple font
     lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_24, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui().big_number, lv_color_hex(0xFF00DC), LV_PART_MAIN);
-    lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, -30);
 
     // Setup push prompt background
 
@@ -128,7 +126,6 @@ void BlindProgressionScreen::update_display() {
     lv_obj_set_style_text_font(ui().small_blind_active, LV_FONT_DEFAULT, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().small_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui().small_blind_active, lv_color_hex(0xAAAAAA), LV_PART_MAIN);
-    lv_obj_align(ui().small_blind_active, LV_ALIGN_CENTER, 0, -10);
     set_visible(ui().small_blind_active, true);
 
     // Calculate dynamic game time estimate
@@ -144,7 +141,6 @@ void BlindProgressionScreen::update_display() {
     lv_obj_set_style_text_font(ui().big_blind_active, LV_FONT_DEFAULT, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui().big_blind_active, lv_color_hex(0x777777), LV_PART_MAIN);
-    lv_obj_align(ui().big_blind_active, LV_ALIGN_CENTER, 0, 20);
     set_visible(ui().big_blind_active, true);
 }
 

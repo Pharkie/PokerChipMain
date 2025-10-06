@@ -81,7 +81,7 @@ namespace ui
         g_handles.page_title = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.page_title, "");
         apply_label_style(g_handles.page_title, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.page_title, 20, 67);
+        lv_obj_align(g_handles.page_title, LV_ALIGN_TOP_MID, 0, 20);
 
         // Bottom button bar (shared between config "Confirm" and game "Menu")
         g_handles.bottom_button_bg = lv_button_create(g_handles.screen);
@@ -107,37 +107,37 @@ namespace ui
         g_handles.small_blind_active = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.small_blind_active, "0");
         apply_label_style(g_handles.small_blind_active, lv_color_hex(0x00FF46), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.small_blind_active, 88, 76);
-
-        g_handles.elapsed_mins = lv_label_create(g_handles.screen);
-        lv_label_set_text(g_handles.elapsed_mins, "00");
-        apply_label_style(g_handles.elapsed_mins, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.elapsed_mins, 94, 209);
-
-        g_handles.big_blind_active = lv_label_create(g_handles.screen);
-        lv_label_set_text(g_handles.big_blind_active, "0");
-        apply_label_style(g_handles.big_blind_active, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.big_blind_active, 71, 139);
-
-        g_handles.elapsed_secs = lv_label_create(g_handles.screen);
-        lv_label_set_text(g_handles.elapsed_secs, "00");
-        apply_label_style(g_handles.elapsed_secs, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.elapsed_secs, 137, 220);
-
-        g_handles.timer_colon = lv_label_create(g_handles.screen);
-        lv_label_set_text(g_handles.timer_colon, ":");
-        apply_label_style(g_handles.timer_colon, lv_color_hex(0xFFFFFF), &lv_font_montserrat_48);
-        lv_obj_align(g_handles.timer_colon, LV_ALIGN_CENTER, 0, 68);
+        lv_obj_align(g_handles.small_blind_active, LV_ALIGN_CENTER, -60, -15);
 
         g_handles.active_small_blind_label = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.active_small_blind_label, "Small blind");
         apply_label_style(g_handles.active_small_blind_label, lv_color_hex(0x00FF46), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.active_small_blind_label, 5, 100);
+        lv_obj_align(g_handles.active_small_blind_label, LV_ALIGN_CENTER, -60, -55);
+
+        g_handles.big_blind_active = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.big_blind_active, "0");
+        apply_label_style(g_handles.big_blind_active, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
+        lv_obj_align(g_handles.big_blind_active, LV_ALIGN_CENTER, 60, -15);
 
         g_handles.active_big_blind_label = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.active_big_blind_label, "Big blind");
         apply_label_style(g_handles.active_big_blind_label, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
-        lv_obj_set_pos(g_handles.active_big_blind_label, 5, 161);
+        lv_obj_align(g_handles.active_big_blind_label, LV_ALIGN_CENTER, 60, -55);
+
+        g_handles.elapsed_mins = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.elapsed_mins, "00");
+        apply_label_style(g_handles.elapsed_mins, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+        lv_obj_align(g_handles.elapsed_mins, LV_ALIGN_CENTER, -40, 35);
+
+        g_handles.elapsed_secs = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.elapsed_secs, "00");
+        apply_label_style(g_handles.elapsed_secs, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+        lv_obj_align(g_handles.elapsed_secs, LV_ALIGN_CENTER, 40, 35);
+
+        g_handles.timer_colon = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.timer_colon, ":");
+        apply_label_style(g_handles.timer_colon, lv_color_hex(0xFFFFFF), &lv_font_montserrat_48);
+        lv_obj_align(g_handles.timer_colon, LV_ALIGN_CENTER, 0, 35);
 
         g_handles.focus_proxy = lv_button_create(g_handles.screen);
         lv_obj_set_size(g_handles.focus_proxy, 1, 1);

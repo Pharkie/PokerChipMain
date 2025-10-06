@@ -29,13 +29,11 @@ void SmallBlindScreen::on_enter() {
     // Setup title
     lv_label_set_text(ui().page_title, "Starting small blinds");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 40);
 
     // Setup big number display - 48pt purple font
     lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_color(ui().big_number, lv_color_hex(0xFF00DC), LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().big_number, LV_ALIGN_CENTER, 0, 0);
     update_display();
 
     // Setup push prompt background

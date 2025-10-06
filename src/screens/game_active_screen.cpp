@@ -38,37 +38,27 @@ void GameActiveScreen::on_enter() {
     // Setup round title
     update_round_title();
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().page_title, LV_ALIGN_TOP_MID, 0, 15);
 
-    // Setup small blind display (large font) - positioned below title
+    // Setup small blind display (large font)
     lv_obj_set_style_text_font(ui().small_blind_active, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().small_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().small_blind_active, LV_ALIGN_CENTER, -60, -25);
 
     lv_label_set_text(ui().active_small_blind_label, "Small\nBlind");
     lv_obj_set_style_text_align(ui().active_small_blind_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().active_small_blind_label, LV_ALIGN_CENTER, -60, -65);
 
-    // Setup big blind display (large font) - positioned below title
+    // Setup big blind display (large font)
     lv_obj_set_style_text_font(ui().big_blind_active, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().big_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().big_blind_active, LV_ALIGN_CENTER, 60, -25);
 
     lv_label_set_text(ui().active_big_blind_label, "Big\nBlind");
     lv_obj_set_style_text_align(ui().active_big_blind_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(ui().active_big_blind_label, LV_ALIGN_CENTER, 60, -65);
 
     // Setup timer display (large font, MM:SS format with spacing)
     lv_obj_set_style_text_font(ui().elapsed_mins, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().elapsed_mins, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
-    lv_obj_align(ui().elapsed_mins, LV_ALIGN_CENTER, -40, 25);
 
     lv_obj_set_style_text_font(ui().elapsed_secs, &lv_font_montserrat_48, LV_PART_MAIN);
     lv_obj_set_style_text_align(ui().elapsed_secs, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-    lv_obj_align(ui().elapsed_secs, LV_ALIGN_CENTER, 40, 25);
-
-    // Show timer colon (centered between MM and SS)
-    lv_obj_align(ui().timer_colon, LV_ALIGN_CENTER, 0, 25);
 
     // Register touch events for menu items
     lv_obj_add_event_cb(ui().bottom_button_bg, bottom_button_bg_clicked_cb, LV_EVENT_CLICKED, this);
