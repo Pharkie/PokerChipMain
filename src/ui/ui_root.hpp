@@ -24,6 +24,11 @@ struct Handles
     lv_obj_t *active_big_blind_label = nullptr;
     lv_obj_t *focus_proxy = nullptr;
 
+    // Mode (blind progression) screen
+    lv_obj_t *mode_name = nullptr;
+    lv_obj_t *mode_description = nullptr;
+    lv_obj_t *mode_game_time = nullptr;
+
     // Menu system
     lv_obj_t *menu_overlay = nullptr;
     lv_obj_t *menu_item_resume = nullptr;
@@ -36,15 +41,25 @@ struct Handles
     // Info system
     lv_obj_t *info_button = nullptr;
     lv_obj_t *info_overlay = nullptr;
+    lv_obj_t *info_title = nullptr;
+    lv_obj_t *info_title_bg = nullptr;
+    lv_obj_t *info_blue = nullptr;
+    lv_obj_t *info_white = nullptr;
+    lv_obj_t *info_red = nullptr;
+    lv_obj_t *info_stack = nullptr;
     lv_obj_t *info_close_button = nullptr;
+    lv_obj_t *info_close_label = nullptr;
 };
 
 /// Widget groups for efficient show/hide management
 /// Widgets are organized by which screens use them
 struct WidgetGroups
 {
-    /// Configuration screens common widgets (small blind, round minutes, progression)
+    /// Configuration screens common widgets (small blind, round minutes, volume)
     std::vector<lv_obj_t**> config_common;
+
+    /// Mode (blind progression) screen widgets
+    std::vector<lv_obj_t**> mode_screen;
 
     /// Active game screen widgets
     std::vector<lv_obj_t**> game_active;

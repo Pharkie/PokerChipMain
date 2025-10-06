@@ -65,14 +65,14 @@ namespace ui
         g_handles.big_number = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.big_number, "0");
         apply_label_style(g_handles.big_number, lv_color_hex(0xFF00DC), &lv_font_montserrat_48);
-        lv_obj_set_pos(g_handles.big_number, 79, 108);
+        lv_obj_align(g_handles.big_number, LV_ALIGN_CENTER, 0, 0);
 
         // Round title background banner (top area, dark gray - mirrors bottom Menu button)
         // Created FIRST so it's behind the text (z-order)
         g_handles.page_title_bg = lv_obj_create(g_handles.screen);
         lv_obj_clear_flag(g_handles.page_title_bg, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_set_size(g_handles.page_title_bg, 280, 50);
-        lv_obj_set_pos(g_handles.page_title_bg, -20, -5);
+        lv_obj_set_size(g_handles.page_title_bg, 280, 58);
+        lv_obj_set_pos(g_handles.page_title_bg, -20, -10);
         lv_obj_set_style_bg_color(g_handles.page_title_bg, lv_color_hex(0x333333), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(g_handles.page_title_bg, LV_OPA_COVER, LV_PART_MAIN);
         lv_obj_set_style_border_width(g_handles.page_title_bg, 0, LV_PART_MAIN);
@@ -81,7 +81,7 @@ namespace ui
         g_handles.page_title = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.page_title, "");
         apply_label_style(g_handles.page_title, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.page_title, LV_ALIGN_TOP_MID, 0, 20);
+        lv_obj_align(g_handles.page_title, LV_ALIGN_TOP_MID, 0, 28);
 
         // Bottom button bar (shared between config "Confirm" and game "Menu")
         g_handles.bottom_button_bg = lv_button_create(g_handles.screen);
@@ -107,37 +107,37 @@ namespace ui
         g_handles.small_blind_active = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.small_blind_active, "0");
         apply_label_style(g_handles.small_blind_active, lv_color_hex(0x00FF46), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.small_blind_active, LV_ALIGN_CENTER, -60, -15);
+        lv_obj_align(g_handles.small_blind_active, LV_ALIGN_CENTER, -60, -10);
 
         g_handles.active_small_blind_label = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.active_small_blind_label, "Small blind");
         apply_label_style(g_handles.active_small_blind_label, lv_color_hex(0x00FF46), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.active_small_blind_label, LV_ALIGN_CENTER, -60, -55);
+        lv_obj_align(g_handles.active_small_blind_label, LV_ALIGN_CENTER, -60, -50);
 
         g_handles.big_blind_active = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.big_blind_active, "0");
         apply_label_style(g_handles.big_blind_active, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.big_blind_active, LV_ALIGN_CENTER, 60, -15);
+        lv_obj_align(g_handles.big_blind_active, LV_ALIGN_CENTER, 60, -10);
 
         g_handles.active_big_blind_label = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.active_big_blind_label, "Big blind");
         apply_label_style(g_handles.active_big_blind_label, lv_color_hex(0x00FBFF), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.active_big_blind_label, LV_ALIGN_CENTER, 60, -55);
+        lv_obj_align(g_handles.active_big_blind_label, LV_ALIGN_CENTER, 60, -50);
 
         g_handles.elapsed_mins = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.elapsed_mins, "00");
         apply_label_style(g_handles.elapsed_mins, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.elapsed_mins, LV_ALIGN_CENTER, -40, 35);
+        lv_obj_align(g_handles.elapsed_mins, LV_ALIGN_CENTER, -40, 40);
 
         g_handles.elapsed_secs = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.elapsed_secs, "00");
         apply_label_style(g_handles.elapsed_secs, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
-        lv_obj_align(g_handles.elapsed_secs, LV_ALIGN_CENTER, 40, 35);
+        lv_obj_align(g_handles.elapsed_secs, LV_ALIGN_CENTER, 40, 40);
 
         g_handles.timer_colon = lv_label_create(g_handles.screen);
         lv_label_set_text(g_handles.timer_colon, ":");
         apply_label_style(g_handles.timer_colon, lv_color_hex(0xFFFFFF), &lv_font_montserrat_48);
-        lv_obj_align(g_handles.timer_colon, LV_ALIGN_CENTER, 0, 35);
+        lv_obj_align(g_handles.timer_colon, LV_ALIGN_CENTER, 0, 40);
 
         g_handles.focus_proxy = lv_button_create(g_handles.screen);
         lv_obj_set_size(g_handles.focus_proxy, 1, 1);
@@ -149,6 +149,22 @@ namespace ui
 #endif
         lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_add_flag(g_handles.focus_proxy, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
+
+        // Mode (blind progression) screen widgets
+        g_handles.mode_name = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.mode_name, "");
+        apply_label_style(g_handles.mode_name, lv_color_hex(0xFF00DC), &lv_font_montserrat_24);
+        lv_obj_align(g_handles.mode_name, LV_ALIGN_CENTER, 0, -25);
+
+        g_handles.mode_description = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.mode_description, "");
+        apply_label_style(g_handles.mode_description, lv_color_hex(0xAAAAAA), LV_FONT_DEFAULT);
+        lv_obj_align(g_handles.mode_description, LV_ALIGN_CENTER, 0, -5);
+
+        g_handles.mode_game_time = lv_label_create(g_handles.screen);
+        lv_label_set_text(g_handles.mode_game_time, "");
+        apply_label_style(g_handles.mode_game_time, lv_color_hex(0x777777), LV_FONT_DEFAULT);
+        lv_obj_align(g_handles.mode_game_time, LV_ALIGN_CENTER, 0, 25);
 
         // Menu overlay (full screen, initially hidden)
         g_handles.menu_overlay = lv_obj_create(g_handles.screen);
@@ -237,58 +253,81 @@ namespace ui
         lv_obj_set_style_border_width(g_handles.info_overlay, 0, LV_PART_MAIN);
         lv_obj_add_flag(g_handles.info_overlay, LV_OBJ_FLAG_CLICKABLE);
 
-        // Info overlay title (below Close button)
-        lv_obj_t *info_title = lv_label_create(g_handles.info_overlay);
-        lv_label_set_text(info_title, "CHIP BREAKDOWN");
-        apply_label_style(info_title, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
-        lv_obj_set_style_text_align(info_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-        lv_obj_align(info_title, LV_ALIGN_TOP_MID, 0, 65); // Below Close button
+        // Info title background banner (matches page_title_bg style)
+        g_handles.info_title_bg = lv_obj_create(g_handles.info_overlay);
+        lv_obj_clear_flag(g_handles.info_title_bg, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_size(g_handles.info_title_bg, 280, 58);
+        lv_obj_set_pos(g_handles.info_title_bg, -20, -10);
+        lv_obj_set_style_bg_color(g_handles.info_title_bg, lv_color_hex(0x333333), LV_PART_MAIN);
+        lv_obj_set_style_bg_opa(g_handles.info_title_bg, LV_OPA_COVER, LV_PART_MAIN);
+        lv_obj_set_style_border_width(g_handles.info_title_bg, 0, LV_PART_MAIN);
+        lv_obj_set_style_radius(g_handles.info_title_bg, 0, LV_PART_MAIN);
+
+        // Info overlay title
+        g_handles.info_title = lv_label_create(g_handles.info_overlay);
+        lv_label_set_text(g_handles.info_title, "Chip Breakdown");
+        apply_label_style(g_handles.info_title, lv_color_hex(0x9A9A9A), LV_FONT_DEFAULT);
+        lv_obj_set_style_text_align(g_handles.info_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_align(g_handles.info_title, LV_ALIGN_TOP_MID, 0, 28);
 
         // Blue chips line
-        lv_obj_t *info_blue = lv_label_create(g_handles.info_overlay);
-        lv_label_set_text(info_blue, "16 x Blue (25) = 400");
-        apply_label_style(info_blue, lv_color_hex(0x4488FF), LV_FONT_DEFAULT);
-        lv_obj_set_style_text_align(info_blue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-        lv_obj_align(info_blue, LV_ALIGN_CENTER, 0, -10);
+        g_handles.info_blue = lv_label_create(g_handles.info_overlay);
+        lv_label_set_text(g_handles.info_blue, "16 x Blue (25) = 400");
+        apply_label_style(g_handles.info_blue, lv_color_hex(0x4488FF), LV_FONT_DEFAULT);
+        lv_obj_set_style_text_align(g_handles.info_blue, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_align(g_handles.info_blue, LV_ALIGN_CENTER, 0, -35);
 
         // White chips line
-        lv_obj_t *info_white = lv_label_create(g_handles.info_overlay);
-        lv_label_set_text(info_white, "20 x White (50) = 1000");
-        apply_label_style(info_white, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
-        lv_obj_set_style_text_align(info_white, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-        lv_obj_align(info_white, LV_ALIGN_CENTER, 0, 15);
+        g_handles.info_white = lv_label_create(g_handles.info_overlay);
+        lv_label_set_text(g_handles.info_white, "20 x White (50) = 1000");
+        apply_label_style(g_handles.info_white, lv_color_hex(0xFFFFFF), LV_FONT_DEFAULT);
+        lv_obj_set_style_text_align(g_handles.info_white, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_align(g_handles.info_white, LV_ALIGN_CENTER, 0, -10);
 
         // Red chips line
-        lv_obj_t *info_red = lv_label_create(g_handles.info_overlay);
-        lv_label_set_text(info_red, "6 x Red (100) = 600");
-        apply_label_style(info_red, lv_color_hex(0xFF4444), LV_FONT_DEFAULT);
-        lv_obj_set_style_text_align(info_red, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-        lv_obj_align(info_red, LV_ALIGN_CENTER, 0, 40);
+        g_handles.info_red = lv_label_create(g_handles.info_overlay);
+        lv_label_set_text(g_handles.info_red, "6 x Red (100) = 600");
+        apply_label_style(g_handles.info_red, lv_color_hex(0xFF4444), LV_FONT_DEFAULT);
+        lv_obj_set_style_text_align(g_handles.info_red, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_align(g_handles.info_red, LV_ALIGN_CENTER, 0, 15);
 
         // Total stack (after chip breakdown)
-        lv_obj_t *info_stack = lv_label_create(g_handles.info_overlay);
-        lv_label_set_text(info_stack, "Total stack: 2000");
-        apply_label_style(info_stack, lv_color_hex(0xCCCCCC), LV_FONT_DEFAULT);
-        lv_obj_set_style_text_align(info_stack, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-        lv_obj_align(info_stack, LV_ALIGN_CENTER, 0, 70);
+        g_handles.info_stack = lv_label_create(g_handles.info_overlay);
+        lv_label_set_text(g_handles.info_stack, "Total stack: 2000");
+        apply_label_style(g_handles.info_stack, lv_color_hex(0xCCCCCC), LV_FONT_DEFAULT);
+        lv_obj_set_style_text_align(g_handles.info_stack, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_align(g_handles.info_stack, LV_ALIGN_CENTER, 0, 45);
 
-        // Close button with label (upper-right, positioned inside circular display)
+        // Close button at bottom (matches confirm/menu button style)
         g_handles.info_close_button = lv_button_create(g_handles.info_overlay);
-        lv_obj_set_size(g_handles.info_close_button, 60, 30);
-        lv_obj_set_pos(g_handles.info_close_button, 130, 20);
-        lv_obj_set_style_bg_color(g_handles.info_close_button, lv_color_hex(0x444444), LV_PART_MAIN);
-        lv_obj_set_style_radius(g_handles.info_close_button, 15, LV_PART_MAIN);
-        lv_obj_set_style_border_width(g_handles.info_close_button, 1, LV_PART_MAIN);
-        lv_obj_set_style_border_color(g_handles.info_close_button, lv_color_hex(0x888888), LV_PART_MAIN);
-        lv_obj_t *close_label = lv_label_create(g_handles.info_close_button);
-        lv_label_set_text(close_label, "Close X");
-        lv_obj_set_style_text_color(close_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-        lv_obj_center(close_label);
+        lv_obj_set_size(g_handles.info_close_button, 240, 60);
+        lv_obj_set_pos(g_handles.info_close_button, 0, 200);
+        lv_obj_set_style_bg_color(g_handles.info_close_button, lv_color_hex(0xDF7B0F), LV_PART_MAIN);
+        lv_obj_set_style_bg_opa(g_handles.info_close_button, LV_OPA_COVER, LV_PART_MAIN);
+        lv_obj_set_style_border_width(g_handles.info_close_button, 0, LV_PART_MAIN);
+        lv_obj_set_style_radius(g_handles.info_close_button, 0, LV_PART_MAIN);
+
+        g_handles.info_close_label = lv_label_create(g_handles.info_close_button);
+        lv_label_set_text(g_handles.info_close_label, "Close");
+        lv_obj_set_style_text_color(g_handles.info_close_label, lv_color_hex(0x000000), LV_PART_MAIN);
+        lv_obj_set_style_text_align(g_handles.info_close_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+        lv_obj_align(g_handles.info_close_label, LV_ALIGN_CENTER, 0, -12);
 
         // Initialize widget groups for efficient show/hide management
         g_groups.config_common = {
             &g_handles.page_title,
+            &g_handles.page_title_bg,
             &g_handles.big_number,
+            &g_handles.bottom_button_bg,
+            &g_handles.confirm_label
+        };
+
+        g_groups.mode_screen = {
+            &g_handles.page_title,
+            &g_handles.page_title_bg,
+            &g_handles.mode_name,
+            &g_handles.mode_description,
+            &g_handles.mode_game_time,
             &g_handles.bottom_button_bg,
             &g_handles.confirm_label
         };
@@ -321,7 +360,14 @@ namespace ui
         g_groups.info = {
             &g_handles.info_overlay,
             &g_handles.info_button,
-            &g_handles.info_close_button};
+            &g_handles.info_title_bg,
+            &g_handles.info_title,
+            &g_handles.info_blue,
+            &g_handles.info_white,
+            &g_handles.info_red,
+            &g_handles.info_stack,
+            &g_handles.info_close_button,
+            &g_handles.info_close_label};
 
         // Hide all groups initially
         hide_all_groups();
@@ -365,6 +411,7 @@ namespace ui
     void hide_all_groups()
     {
         hide_group(g_groups.config_common);
+        hide_group(g_groups.mode_screen);
         hide_group(g_groups.game_active);
         // Note: menu and info overlays are NOT hidden here - they're managed separately
     }

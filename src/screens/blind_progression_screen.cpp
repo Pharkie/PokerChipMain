@@ -21,22 +21,14 @@ void BlindProgressionScreen::on_enter() {
     // Default to STANDARD (first option)
     selection_ = 0;
 
-    // Show config screen widgets
+    // Show mode screen widgets
     ui::hide_all_groups();
-    ui::show_group(ui::groups().config_common);
+    ui::show_group(ui::groups().mode_screen);
 
-    // Setup title - smaller font and higher position
     lv_label_set_text(ui().page_title, "Mode");
     lv_obj_set_style_text_align(ui().page_title, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
-    // Setup big number display (option name) - use 24pt purple font
-    lv_obj_set_style_text_font(ui().big_number, &lv_font_montserrat_24, LV_PART_MAIN);
-    lv_obj_set_style_text_align(ui().big_number, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_color(ui().big_number, lv_color_hex(0xFF00DC), LV_PART_MAIN);
-
-    // Setup push prompt background
-
-    // Setup push text
+    lv_obj_set_style_text_align(ui().mode_name, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
     // Update display with initial selection
     update_display();
@@ -52,10 +44,6 @@ void BlindProgressionScreen::on_exit() {
 
     // Remove event callback to prevent duplicates on re-entry
     lv_obj_remove_event_cb(ui().bottom_button_bg, push_button_clicked_cb);
-
-    // Restore original colors for reused widgets (small_blind_active, big_blind_active)
-    lv_obj_set_style_text_color(ui().small_blind_active, lv_color_hex(0x00FF46), LV_PART_MAIN);
-    lv_obj_set_style_text_color(ui().big_blind_active, lv_color_hex(0x00FBFF), LV_PART_MAIN);
 }
 
 void BlindProgressionScreen::handle_encoder(int diff) {
@@ -119,14 +107,11 @@ int BlindProgressionScreen::calculate_estimated_rounds(float multiplier) const {
 
 void BlindProgressionScreen::update_display() {
     // Show option name (TURBO/STANDARD/RELAXED) - purple text
-    lv_label_set_text(ui().big_number, kNames[selection_]);
+    lv_label_set_text(ui().mode_name, kNames[selection_]);
 
-    // Use small_blind_active for description - centered below name
-    lv_label_set_text(ui().small_blind_active, kDescriptions[selection_]);
-    lv_obj_set_style_text_font(ui().small_blind_active, LV_FONT_DEFAULT, LV_PART_MAIN);
-    lv_obj_set_style_text_align(ui().small_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_color(ui().small_blind_active, lv_color_hex(0xAAAAAA), LV_PART_MAIN);
-    set_visible(ui().small_blind_active, true);
+    // Show description - centered below name
+    lv_label_set_text(ui().mode_description, kDescriptions[selection_]);
+    lv_obj_set_style_text_align(ui().mode_description, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
     // Calculate dynamic game time estimate
     const GameState& game = GameState::instance();
@@ -136,12 +121,9 @@ void BlindProgressionScreen::update_display() {
     snprintf(game_time_buffer_, sizeof(game_time_buffer_),
              "Game time: ~%d mins", total_minutes);
 
-    // Use big_blind_active for game time estimate - grayed out, below description
-    lv_label_set_text(ui().big_blind_active, game_time_buffer_);
-    lv_obj_set_style_text_font(ui().big_blind_active, LV_FONT_DEFAULT, LV_PART_MAIN);
-    lv_obj_set_style_text_align(ui().big_blind_active, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_set_style_text_color(ui().big_blind_active, lv_color_hex(0x777777), LV_PART_MAIN);
-    set_visible(ui().big_blind_active, true);
+    // Show game time estimate - grayed out, below description
+    lv_label_set_text(ui().mode_game_time, game_time_buffer_);
+    lv_obj_set_style_text_align(ui().mode_game_time, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 }
 
 void BlindProgressionScreen::push_button_clicked_cb(lv_event_t* e) {

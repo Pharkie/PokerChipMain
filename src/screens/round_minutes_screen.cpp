@@ -116,7 +116,7 @@ void RoundMinutesScreen::info_overlay_clicked_cb(lv_event_t* e) {
 
 void RoundMinutesScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
-    set_visible(ui().info_overlay, true);
+    ui::show_group(ui::groups().info);
     // F#7 → A7 chirp (playful upward)
     play_tone(2794.0f, 40);  // F#7
     M5.delay(40);
@@ -125,7 +125,7 @@ void RoundMinutesScreen::show_info() {
 
 void RoundMinutesScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
-    set_visible(ui().info_overlay, false);
+    ui::hide_group(ui::groups().info);
     // A6 → F6 chirp (playful downward)
     play_tone(1760.0f, 40);  // A6
     M5.delay(40);

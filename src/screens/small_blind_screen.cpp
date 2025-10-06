@@ -57,10 +57,8 @@ void SmallBlindScreen::on_exit() {
     lv_obj_remove_event_cb(ui().info_overlay, info_overlay_clicked_cb);
     lv_obj_remove_event_cb(ui().info_close_button, info_overlay_clicked_cb);
 
-    // Hide info button when leaving this screen
-    set_visible(ui().info_button, false);
-    set_visible(ui().info_overlay, false);
-    set_visible(ui().info_close_button, false);
+    // Hide info overlay when leaving this screen
+    ui::hide_group(ui::groups().info);
 }
 
 void SmallBlindScreen::handle_encoder(int diff) {
@@ -137,8 +135,7 @@ void SmallBlindScreen::info_overlay_clicked_cb(lv_event_t* e) {
 
 void SmallBlindScreen::show_info() {
     ESP_LOGI(kLogTag, "Showing info overlay");
-    set_visible(ui().info_overlay, true);
-    set_visible(ui().info_close_button, true);
+    ui::show_group(ui::groups().info);
     // F#7 → A7 chirp (playful upward)
     play_tone(2794.0f, 40);  // F#7
     M5.delay(40);
@@ -147,8 +144,7 @@ void SmallBlindScreen::show_info() {
 
 void SmallBlindScreen::hide_info() {
     ESP_LOGI(kLogTag, "Hiding info overlay");
-    set_visible(ui().info_overlay, false);
-    set_visible(ui().info_close_button, false);
+    ui::hide_group(ui::groups().info);
     // A6 → F6 chirp (playful downward)
     play_tone(1760.0f, 40);  // A6
     M5.delay(40);
