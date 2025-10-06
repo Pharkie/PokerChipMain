@@ -29,7 +29,6 @@ private:
     lv_obj_t* mode_game_time_ = nullptr;
     lv_obj_t* bottom_button_ = nullptr;
     lv_obj_t* confirm_label_ = nullptr;
-    lv_obj_t* info_button_ = nullptr;
     lv_obj_t* info_overlay_ = nullptr;
     lv_obj_t* info_title_bg_ = nullptr;
     lv_obj_t* info_title_ = nullptr;
@@ -65,7 +64,6 @@ private:
 
     // Touch handlers
     static void push_button_clicked_cb(lv_event_t* e);
-    static void info_button_clicked_cb(lv_event_t* e);
     static void info_overlay_clicked_cb(lv_event_t* e);
     void show_info();
     void hide_info();

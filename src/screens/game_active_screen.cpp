@@ -49,7 +49,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(small_blind_active_, LV_ALIGN_CENTER, -60, -10);
 
     active_small_blind_label_ = lv_label_create(scr);
-    lv_label_set_text(active_small_blind_label_, "Small\\nBlind");
+    lv_label_set_text(active_small_blind_label_, "Small\nBlind");
     lv_obj_set_style_text_color(active_small_blind_label_, lv_color_hex(0x00FF46), LV_PART_MAIN);
     lv_obj_set_style_text_align(active_small_blind_label_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(active_small_blind_label_, LV_ALIGN_CENTER, -60, -50);
@@ -62,7 +62,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(big_blind_active_, LV_ALIGN_CENTER, 60, -10);
 
     active_big_blind_label_ = lv_label_create(scr);
-    lv_label_set_text(active_big_blind_label_, "Big\\nBlind");
+    lv_label_set_text(active_big_blind_label_, "Big\nBlind");
     lv_obj_set_style_text_color(active_big_blind_label_, lv_color_hex(0x00FBFF), LV_PART_MAIN);
     lv_obj_set_style_text_align(active_big_blind_label_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(active_big_blind_label_, LV_ALIGN_CENTER, 60, -50);
@@ -113,6 +113,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(menu_item_resume_, LV_ALIGN_TOP_MID, 0, 55);
     lv_obj_set_style_bg_color(menu_item_resume_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_resume_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_resume_, 0, LV_PART_MAIN);
     lv_obj_t* resume_label = lv_label_create(menu_item_resume_);
     lv_label_set_text(resume_label, "Resume");
     lv_obj_center(resume_label);
@@ -122,6 +123,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(menu_item_skip_, LV_ALIGN_TOP_MID, 0, 87);
     lv_obj_set_style_bg_color(menu_item_skip_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_skip_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_skip_, 0, LV_PART_MAIN);
     lv_obj_t* skip_label = lv_label_create(menu_item_skip_);
     lv_label_set_text(skip_label, "Skip Round");
     lv_obj_center(skip_label);
@@ -131,6 +133,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(menu_item_volume_, LV_ALIGN_TOP_MID, 0, 119);
     lv_obj_set_style_bg_color(menu_item_volume_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_volume_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_volume_, 0, LV_PART_MAIN);
     lv_obj_t* volume_label = lv_label_create(menu_item_volume_);
     lv_label_set_text(volume_label, "Volume");
     lv_obj_center(volume_label);
@@ -140,6 +143,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(menu_item_reset_, LV_ALIGN_TOP_MID, 0, 151);
     lv_obj_set_style_bg_color(menu_item_reset_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_reset_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_reset_, 0, LV_PART_MAIN);
     lv_obj_t* reset_label = lv_label_create(menu_item_reset_);
     lv_label_set_text(reset_label, "New Game");
     lv_obj_center(reset_label);
@@ -149,6 +153,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(menu_item_poweroff_, LV_ALIGN_TOP_MID, 0, 183);
     lv_obj_set_style_bg_color(menu_item_poweroff_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_poweroff_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_poweroff_, 0, LV_PART_MAIN);
     lv_obj_t* poweroff_label = lv_label_create(menu_item_poweroff_);
     lv_label_set_text(poweroff_label, "Power Off");
     lv_obj_set_style_text_align(poweroff_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
@@ -504,7 +509,6 @@ void GameActiveScreen::menu_item_clicked_cb(lv_event_t* e) {
     for (int i = 0; i < kMenuItemCount; i++) {
         if (clicked_item == items[i]) {
             screen->menu_selection_ = i;
-            screen->update_menu_selection();
             screen->execute_menu_action();
             break;
         }

@@ -61,16 +61,7 @@ void BlindProgressionScreen::create_widgets() {
     lv_label_set_text(confirm_label_, "Confirm");
     lv_obj_align(confirm_label_, LV_ALIGN_CENTER, 0, -12);
 
-    // Info button
-    info_button_ = lv_button_create(scr);
-    ui::styles::apply_info_button(info_button_);
-    lv_obj_set_pos(info_button_, 185, 103);
-    lv_obj_t* info_label = lv_label_create(info_button_);
-    lv_label_set_text(info_label, "i");
-    lv_obj_set_style_text_color(info_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-    lv_obj_center(info_label);
-
-    // Info overlay
+    // Info overlay (no info button on mode screen)
     info_overlay_ = lv_obj_create(scr);
     ui::styles::apply_overlay_bg(info_overlay_);
     lv_obj_set_pos(info_overlay_, 0, 0);
@@ -125,7 +116,6 @@ void BlindProgressionScreen::destroy_widgets() {
     ESP_LOGI(kLogTag, "Destroying widgets");
 
     if (info_overlay_) lv_obj_del(info_overlay_);
-    if (info_button_) lv_obj_del(info_button_);
     if (bottom_button_) lv_obj_del(bottom_button_);
     if (mode_game_time_) lv_obj_del(mode_game_time_);
     if (mode_description_) lv_obj_del(mode_description_);
@@ -140,7 +130,6 @@ void BlindProgressionScreen::destroy_widgets() {
     mode_game_time_ = nullptr;
     bottom_button_ = nullptr;
     confirm_label_ = nullptr;
-    info_button_ = nullptr;
     info_overlay_ = nullptr;
     info_title_bg_ = nullptr;
     info_title_ = nullptr;
@@ -160,7 +149,6 @@ void BlindProgressionScreen::on_enter() {
     update_display();
 
     // Setup event callbacks
-    lv_obj_add_event_cb(info_button_, info_button_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(info_overlay_, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(info_close_button_, info_overlay_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(bottom_button_, push_button_clicked_cb, LV_EVENT_CLICKED, this);
@@ -196,12 +184,6 @@ void BlindProgressionScreen::handle_encoder(int diff) {
 }
 
 void BlindProgressionScreen::handle_button_click() {
-    // If modal overlay is blocking, close it instead of advancing
-    if (is_modal_blocking()) {
-        hide_info();
-        return;
-    }
-
     ESP_LOGI(kLogTag, "Button clicked, selected: %s (multiplier: %.2f)",
              kNames[selection_], kMultipliers[selection_]);
 
@@ -262,11 +244,6 @@ void BlindProgressionScreen::update_display() {
 void BlindProgressionScreen::push_button_clicked_cb(lv_event_t* e) {
     BlindProgressionScreen* screen = static_cast<BlindProgressionScreen*>(lv_event_get_user_data(e));
     screen->handle_button_click();
-}
-
-void BlindProgressionScreen::info_button_clicked_cb(lv_event_t* e) {
-    BlindProgressionScreen* screen = static_cast<BlindProgressionScreen*>(lv_event_get_user_data(e));
-    screen->show_info();
 }
 
 void BlindProgressionScreen::info_overlay_clicked_cb(lv_event_t* e) {

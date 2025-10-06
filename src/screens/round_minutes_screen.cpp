@@ -185,12 +185,6 @@ void RoundMinutesScreen::handle_encoder(int diff) {
 }
 
 void RoundMinutesScreen::handle_button_click() {
-    // If modal overlay is blocking, close it instead of advancing
-    if (is_modal_blocking()) {
-        hide_info();
-        return;
-    }
-
     ESP_LOGI(kLogTag, "Button clicked, value=%d", value_);
 
     // Save to game state
