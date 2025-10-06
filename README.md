@@ -1,6 +1,6 @@
 # PokerChip - M5Stack Dial Poker Timer
 
-A poker timer for the M5Stack Dial. Set up your game with the dial, then let it manage blind levels automatically.
+Turn your M5Stack Dial into the heartbeat of your poker night. Spin the dial, set your game, and let PokerChip take over — managing blinds, timing each round, and bebooping to keep you on track while you focus on the cards.
 
 ![PokerChip Demo](docs/assets/PokerOct25.gif)
 
@@ -15,11 +15,13 @@ A poker timer for the M5Stack Dial. Set up your game with the dial, then let it 
 
 ## Quick Start
 
+Use PlatformIO IDE in VS Code.
+
 ```bash
 pio run --target upload    # Flash to M5Stack Dial
 ```
 
-Or use PlatformIO IDE in VS Code.
+If anyone wants a prebuilt firmware, let me know.
 
 ## Controls
 
@@ -34,12 +36,6 @@ Building a project for M5Stack Dial? See [docs/](docs/) for reusable patterns:
 - Hardware abstraction modules (Button, Encoder)
 - OOP screen architecture
 - What works (and doesn't) with M5Unified on Dial
-
-## Requirements
-
-- PlatformIO
-- M5Stack Dial hardware
-- Keep repo outside cloud-synced folders (Dropbox/iCloud)
 
 ## License
 
