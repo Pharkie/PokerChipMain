@@ -5,6 +5,7 @@
 #include "screen_manager.hpp"
 #include "game_active_screen.hpp"
 #include "storage/nvs_storage.hpp"
+#include "ui/ui_helpers.hpp"
 #include "ui/ui_styles.hpp"
 
 namespace {
@@ -38,7 +39,7 @@ void VolumeScreen::create_widgets() {
     lv_obj_align(big_number_, LV_ALIGN_CENTER, 0, 0);
 
     // Bottom button
-    bottom_button_ = lv_button_create(scr);
+    bottom_button_ = ui::helpers::create_button(scr);
     ui::styles::apply_bottom_button(bottom_button_);
     lv_obj_set_pos(bottom_button_, 0, 200);
 

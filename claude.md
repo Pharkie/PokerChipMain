@@ -329,6 +329,40 @@ ui::hide_all_groups();  // Hide all managed groups
 - **Comments should explain WHY, not WHAT**: Focus on design intent (e.g., "// Created FIRST so it's behind the text (z-order)") rather than describing changes or movements
 - **Single source of truth for widget positioning**: ALL widget positions/sizes are defined ONCE in `ui_root.cpp`. Screen files should NEVER call `lv_obj_set_pos()`, `lv_obj_set_size()`, or `lv_obj_align()` on shared widgets. Screens only manage visibility (via widget groups) and event callbacks. If a widget needs screen-specific positioning, it should be a screen-local widget, not a shared one.
 
+## UI Element Creation Guidelines
+
+### LVGL Focus System and Custom Interaction Model
+This project uses a **custom interaction model** that differs from LVGL's default input group/focus system:
+- **Rotary encoder** directly modifies values (not input group navigation between widgets)
+- **Button A** always performs the same action (not "confirm focused widget")
+- **Touch events** handle menu interactions directly via callbacks
+
+LVGL's default behavior automatically adds buttons to input groups when clicked (`LV_OBJ_FLAG_CLICK_FOCUSABLE`), which causes unwanted **blue focus outlines** to appear. This conflicts with our interaction model.
+
+### Required Pattern: Always Use `ui::helpers` for Button Creation
+**❌ WRONG - Direct LVGL API (causes focus outlines):**
+```cpp
+lv_obj_t* btn = lv_button_create(parent);  // Missing LV_OBJ_FLAG_CLICK_FOCUSABLE removal!
+```
+
+**✅ CORRECT - Use helper function:**
+```cpp
+#include "ui/ui_helpers.hpp"
+
+lv_obj_t* btn = ui::helpers::create_button(parent);  // Focus disabled by default
+```
+
+### Why This Matters
+- **Without the helper**: Buttons become focusable on click, encoder rotation causes blue outlines to appear/move
+- **With the helper**: Buttons work as pure touch targets, no focus system interference
+- **Defensive architecture**: New code automatically gets correct behavior, harder to introduce bugs
+
+### Available Helpers ([src/ui/ui_helpers.hpp](src/ui/ui_helpers.hpp))
+- `ui::helpers::create_button(parent)` - Button with `LV_OBJ_FLAG_CLICK_FOCUSABLE` removed
+- `ui::helpers::create_label(parent)` - Standard label (labels are not focusable by default)
+
+**IMPORTANT**: Always use `ui::helpers::create_button()` instead of `lv_button_create()` when creating new UI elements. This ensures consistency and prevents focus outline bugs.
+
 ## License
 Creative Commons Attribution-NonCommercial 4.0 International
 Commercial use requires separate permission from project authors.

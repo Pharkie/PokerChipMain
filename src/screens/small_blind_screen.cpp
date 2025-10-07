@@ -6,6 +6,7 @@
 #include "game_state.hpp"
 #include "screen_manager.hpp"
 #include "round_minutes_screen.hpp"
+#include "ui/ui_helpers.hpp"
 #include "ui/ui_styles.hpp"
 
 namespace {
@@ -40,10 +41,9 @@ void SmallBlindScreen::create_widgets() {
     lv_obj_align(big_number_, LV_ALIGN_CENTER, 0, 0);
 
     // Bottom button
-    bottom_button_ = lv_button_create(scr);
+    bottom_button_ = ui::helpers::create_button(scr);
     lv_obj_clear_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(bottom_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_bottom_button(bottom_button_);
     lv_obj_set_pos(bottom_button_, 0, 200);
 
@@ -53,10 +53,9 @@ void SmallBlindScreen::create_widgets() {
     lv_obj_align(confirm_label_, LV_ALIGN_CENTER, 0, -12);
 
     // Info button (right side, vertically centered)
-    info_button_ = lv_button_create(scr);
+    info_button_ = ui::helpers::create_button(scr);
     lv_obj_clear_flag(info_button_, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(info_button_, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(info_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_info_button(info_button_);
     lv_obj_set_pos(info_button_, 185, 103);
     lv_obj_t* info_label = lv_label_create(info_button_);
@@ -107,10 +106,9 @@ void SmallBlindScreen::create_widgets() {
     lv_obj_align(info_stack_, LV_ALIGN_CENTER, 0, 45);
 
     // Info close button
-    info_close_button_ = lv_button_create(info_overlay_);
+    info_close_button_ = ui::helpers::create_button(info_overlay_);
     lv_obj_clear_flag(info_close_button_, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(info_close_button_, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(info_close_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_bottom_button(info_close_button_);
     lv_obj_set_pos(info_close_button_, 0, 200);
 

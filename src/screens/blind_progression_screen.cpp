@@ -1,10 +1,12 @@
 #include "blind_progression_screen.hpp"
 
+#include <cmath>
 #include <M5Unified.hpp>
 #include <esp_log.h>
 #include "game_state.hpp"
 #include "screen_manager.hpp"
 #include "game_active_screen.hpp"
+#include "ui/ui_helpers.hpp"
 #include "ui/ui_styles.hpp"
 
 namespace {
@@ -52,10 +54,9 @@ void BlindProgressionScreen::create_widgets() {
     lv_obj_align(mode_game_time_, LV_ALIGN_CENTER, 0, 25);
 
     // Bottom button
-    bottom_button_ = lv_button_create(scr);
+    bottom_button_ = ui::helpers::create_button(scr);
     lv_obj_clear_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(bottom_button_, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(bottom_button_, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     ui::styles::apply_bottom_button(bottom_button_);
     lv_obj_set_pos(bottom_button_, 0, 200);
 
@@ -103,7 +104,7 @@ void BlindProgressionScreen::create_widgets() {
     lv_obj_set_style_text_align(info_stack_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(info_stack_, LV_ALIGN_CENTER, 0, 45);
 
-    info_close_button_ = lv_button_create(info_overlay_);
+    info_close_button_ = ui::helpers::create_button(info_overlay_);
     ui::styles::apply_bottom_button(info_close_button_);
     lv_obj_set_pos(info_close_button_, 0, 200);
 
@@ -216,18 +217,28 @@ int BlindProgressionScreen::calculate_estimated_rounds(float multiplier) const {
     const GameState& game = GameState::instance();
     int small_blind = game.small_blind();
 
-    // Simulate blind progression until endgame
-    // Game typically ends when average stack gets very short relative to blinds
-    // Conservative: when BB reaches ~25% of starting stack (500 chips)
-    // At this point, players are playing push/fold poker
-    int critical_big_blind = kStartingStack / 4;  // 500 for 2000 stack
-    int rounds = 0;
-    int current_sb = small_blind;
+    // Structural fix: Calculate rounds based on multiplier growth until endgame
+    // Game ends when blinds force all-in play
+    // Key insight: endgame is when SB reaches ~50-75% of starting stack
+    // At this point, average player has ~1.5-3 big blinds (game concludes)
+    //
+    // To make this work for any starting blind, we calculate:
+    // "How many times must we multiply SB until it reaches endgame level?"
+    //
+    // Formula: starting_sb × (multiplier ^ rounds) = endgame_sb
+    // Therefore: rounds = log(endgame_sb / starting_sb) / log(multiplier)
 
-    while (current_sb * 2 < critical_big_blind && rounds < 30) {
-        rounds++;
-        current_sb = static_cast<int>(current_sb * multiplier);
-    }
+    int endgame_small_blind = kStartingStack;  // 2000 for 2000 stack (SB=2000, BB=4000)
+
+    // Calculate number of rounds using logarithmic formula
+    // This gives consistent estimates regardless of starting blind level
+    float growth_factor = static_cast<float>(endgame_small_blind) / static_cast<float>(small_blind);
+    float exact_rounds = std::log(growth_factor) / std::log(multiplier);
+    int rounds = static_cast<int>(exact_rounds + 0.5f);  // Round to nearest
+
+    // Sanity bounds: at least 3 rounds, at most 15 rounds
+    if (rounds < 3) rounds = 3;
+    if (rounds > 15) rounds = 15;
 
     return rounds;
 }

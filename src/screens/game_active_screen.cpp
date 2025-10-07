@@ -6,6 +6,7 @@
 #include "screen_manager.hpp"
 #include "small_blind_screen.hpp"
 #include "volume_screen.hpp"
+#include "ui/ui_helpers.hpp"
 #include "ui/ui_styles.hpp"
 
 namespace {
@@ -87,7 +88,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(elapsed_secs_, LV_ALIGN_CENTER, 40, 40);
 
     // Bottom Menu button
-    bottom_button_ = lv_button_create(scr);
+    bottom_button_ = ui::helpers::create_button(scr);
     ui::styles::apply_bottom_button(bottom_button_);
     lv_obj_set_pos(bottom_button_, 0, 200);
 
@@ -108,7 +109,7 @@ void GameActiveScreen::create_widgets() {
     lv_obj_align(menu_paused_note_, LV_ALIGN_TOP_MID, 0, 20);
 
     // Menu items
-    menu_item_resume_ = lv_button_create(menu_overlay_);
+    menu_item_resume_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_resume_, 280, 28);
     lv_obj_align(menu_item_resume_, LV_ALIGN_TOP_MID, 0, 55);
     lv_obj_set_style_bg_color(menu_item_resume_, lv_color_hex(0x555555), LV_PART_MAIN);
@@ -118,7 +119,7 @@ void GameActiveScreen::create_widgets() {
     lv_label_set_text(resume_label, "Resume");
     lv_obj_center(resume_label);
 
-    menu_item_skip_ = lv_button_create(menu_overlay_);
+    menu_item_skip_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_skip_, 280, 28);
     lv_obj_align(menu_item_skip_, LV_ALIGN_TOP_MID, 0, 87);
     lv_obj_set_style_bg_color(menu_item_skip_, lv_color_hex(0x555555), LV_PART_MAIN);
@@ -128,7 +129,7 @@ void GameActiveScreen::create_widgets() {
     lv_label_set_text(skip_label, "Skip Round");
     lv_obj_center(skip_label);
 
-    menu_item_volume_ = lv_button_create(menu_overlay_);
+    menu_item_volume_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_volume_, 280, 28);
     lv_obj_align(menu_item_volume_, LV_ALIGN_TOP_MID, 0, 119);
     lv_obj_set_style_bg_color(menu_item_volume_, lv_color_hex(0x555555), LV_PART_MAIN);
@@ -138,7 +139,7 @@ void GameActiveScreen::create_widgets() {
     lv_label_set_text(volume_label, "Volume");
     lv_obj_center(volume_label);
 
-    menu_item_reset_ = lv_button_create(menu_overlay_);
+    menu_item_reset_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_reset_, 280, 28);
     lv_obj_align(menu_item_reset_, LV_ALIGN_TOP_MID, 0, 151);
     lv_obj_set_style_bg_color(menu_item_reset_, lv_color_hex(0x555555), LV_PART_MAIN);
@@ -148,7 +149,7 @@ void GameActiveScreen::create_widgets() {
     lv_label_set_text(reset_label, "New Game");
     lv_obj_center(reset_label);
 
-    menu_item_poweroff_ = lv_button_create(menu_overlay_);
+    menu_item_poweroff_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_poweroff_, 280, 90);
     lv_obj_align(menu_item_poweroff_, LV_ALIGN_TOP_MID, 0, 183);
     lv_obj_set_style_bg_color(menu_item_poweroff_, lv_color_hex(0x555555), LV_PART_MAIN);
