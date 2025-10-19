@@ -1,4 +1,5 @@
 #include "game_state.hpp"
+#include <M5Unified.hpp>
 #include <esp_log.h>
 
 namespace {
@@ -17,6 +18,10 @@ void GameState::reset() {
     blind_multiplier_ = 1.5f;
     current_round_ = 1;
     seconds_remaining_ = 0;
+    total_game_seconds_ = 0;
+    total_paused_seconds_ = 0;
+    pause_start_ms_ = 0;
+    max_round_reached_ = 1;
     ESP_LOGI(kLogTag, "State reset to defaults");
 }
 
@@ -79,4 +84,40 @@ void GameState::update_blinds(int new_small_blind) {
     small_blind_ = new_small_blind;
     big_blind_ = new_small_blind * 2;  // Maintain invariant
     ESP_LOGI(kLogTag, "Blinds updated: SB=%d, BB=%d", small_blind_, big_blind_);
+}
+
+void GameState::start_game_timer() {
+    total_game_seconds_ = 0;
+    total_paused_seconds_ = 0;
+    pause_start_ms_ = 0;
+    max_round_reached_ = 1;
+    ESP_LOGI(kLogTag, "Game timer started");
+}
+
+void GameState::tick_game_timer() {
+    total_game_seconds_++;
+}
+
+void GameState::pause_game_timer() {
+    if (pause_start_ms_ == 0) {
+        pause_start_ms_ = M5.millis();
+        ESP_LOGI(kLogTag, "Game timer paused at %lus game time", (unsigned long)total_game_seconds_);
+    }
+}
+
+void GameState::resume_game_timer() {
+    if (pause_start_ms_ != 0) {
+        uint32_t pause_duration_ms = M5.millis() - pause_start_ms_;
+        uint32_t pause_duration_secs = pause_duration_ms / 1000;
+        total_paused_seconds_ += pause_duration_secs;
+        pause_start_ms_ = 0;
+        ESP_LOGI(kLogTag, "Game timer resumed (paused for %lus, total paused: %lus)",
+                 (unsigned long)pause_duration_secs, (unsigned long)total_paused_seconds_);
+    }
+}
+
+void GameState::record_max_round(int round) {
+    if (round > max_round_reached_) {
+        max_round_reached_ = round;
+    }
 }

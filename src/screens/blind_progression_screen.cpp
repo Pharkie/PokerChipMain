@@ -218,17 +218,17 @@ int BlindProgressionScreen::calculate_estimated_rounds(float multiplier) const {
     int small_blind = game.small_blind();
 
     // Structural fix: Calculate rounds based on multiplier growth until endgame
-    // Game ends when blinds force all-in play
-    // Key insight: endgame is when SB reaches ~50-75% of starting stack
-    // At this point, average player has ~1.5-3 big blinds (game concludes)
+    // Game ends when blinds force all-in play (push/fold territory)
+    // Key insight: endgame is when average player has ~2-4 big blinds left
+    // At this point, players are in push/fold mode and games conclude quickly
     //
-    // To make this work for any starting blind, we calculate:
-    // "How many times must we multiply SB until it reaches endgame level?"
+    // For 2000 stack: endgame SB ≈ 333 (BB=666, players have ~3 BB average)
+    // This gives realistic game durations across all starting blind levels
     //
     // Formula: starting_sb × (multiplier ^ rounds) = endgame_sb
     // Therefore: rounds = log(endgame_sb / starting_sb) / log(multiplier)
 
-    int endgame_small_blind = kStartingStack;  // 2000 for 2000 stack (SB=2000, BB=4000)
+    int endgame_small_blind = kStartingStack / 6;  // ~333 for 2000 stack
 
     // Calculate number of rounds using logarithmic formula
     // This gives consistent estimates regardless of starting blind level

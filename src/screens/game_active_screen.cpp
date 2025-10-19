@@ -6,6 +6,8 @@
 #include "screen_manager.hpp"
 #include "small_blind_screen.hpp"
 #include "volume_screen.hpp"
+#include "game_logs_screen.hpp"
+#include "storage/game_log.hpp"
 #include "ui/ui_helpers.hpp"
 #include "ui/ui_styles.hpp"
 
@@ -102,16 +104,23 @@ void GameActiveScreen::create_widgets() {
     ui::styles::apply_overlay_bg(menu_overlay_);
     lv_obj_set_pos(menu_overlay_, 0, 0);
 
-    menu_paused_note_ = lv_label_create(menu_overlay_);
-    lv_label_set_text(menu_paused_note_, "Paused");
-    lv_obj_set_style_text_color(menu_paused_note_, lv_color_hex(0xCCCCCC), LV_PART_MAIN);
-    lv_obj_set_style_text_align(menu_paused_note_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(menu_paused_note_, LV_ALIGN_TOP_MID, 0, 20);
+    // 2-line pause status display
+    menu_paused_label_ = lv_label_create(menu_overlay_);
+    lv_label_set_text(menu_paused_label_, "Paused 0:00");
+    lv_obj_set_style_text_color(menu_paused_label_, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_set_style_text_align(menu_paused_label_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(menu_paused_label_, LV_ALIGN_TOP_MID, 0, 15);
 
-    // Menu items
+    menu_timers_label_ = lv_label_create(menu_overlay_);
+    lv_label_set_text(menu_timers_label_, "Game: 0:00    Paused: 0:00");
+    lv_obj_set_style_text_color(menu_timers_label_, lv_color_hex(0xCCCCCC), LV_PART_MAIN);
+    lv_obj_set_style_text_align(menu_timers_label_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(menu_timers_label_, LV_ALIGN_TOP_MID, 0, 38);
+
+    // Menu items (compact spacing)
     menu_item_resume_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_resume_, 280, 28);
-    lv_obj_align(menu_item_resume_, LV_ALIGN_TOP_MID, 0, 55);
+    lv_obj_align(menu_item_resume_, LV_ALIGN_TOP_MID, 0, 65);
     lv_obj_set_style_bg_color(menu_item_resume_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_resume_, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(menu_item_resume_, 0, LV_PART_MAIN);
@@ -121,7 +130,7 @@ void GameActiveScreen::create_widgets() {
 
     menu_item_skip_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_skip_, 280, 28);
-    lv_obj_align(menu_item_skip_, LV_ALIGN_TOP_MID, 0, 87);
+    lv_obj_align(menu_item_skip_, LV_ALIGN_TOP_MID, 0, 97);
     lv_obj_set_style_bg_color(menu_item_skip_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_skip_, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(menu_item_skip_, 0, LV_PART_MAIN);
@@ -131,7 +140,7 @@ void GameActiveScreen::create_widgets() {
 
     menu_item_volume_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_volume_, 280, 28);
-    lv_obj_align(menu_item_volume_, LV_ALIGN_TOP_MID, 0, 119);
+    lv_obj_align(menu_item_volume_, LV_ALIGN_TOP_MID, 0, 129);
     lv_obj_set_style_bg_color(menu_item_volume_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_volume_, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(menu_item_volume_, 0, LV_PART_MAIN);
@@ -139,9 +148,19 @@ void GameActiveScreen::create_widgets() {
     lv_label_set_text(volume_label, "Volume");
     lv_obj_center(volume_label);
 
+    menu_item_logs_ = ui::helpers::create_button(menu_overlay_);
+    lv_obj_set_size(menu_item_logs_, 280, 28);
+    lv_obj_align(menu_item_logs_, LV_ALIGN_TOP_MID, 0, 161);
+    lv_obj_set_style_bg_color(menu_item_logs_, lv_color_hex(0x555555), LV_PART_MAIN);
+    lv_obj_set_style_radius(menu_item_logs_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_logs_, 0, LV_PART_MAIN);
+    lv_obj_t* logs_label = lv_label_create(menu_item_logs_);
+    lv_label_set_text(logs_label, "Game Logs");
+    lv_obj_center(logs_label);
+
     menu_item_reset_ = ui::helpers::create_button(menu_overlay_);
     lv_obj_set_size(menu_item_reset_, 280, 28);
-    lv_obj_align(menu_item_reset_, LV_ALIGN_TOP_MID, 0, 151);
+    lv_obj_align(menu_item_reset_, LV_ALIGN_TOP_MID, 0, 193);
     lv_obj_set_style_bg_color(menu_item_reset_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_reset_, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(menu_item_reset_, 0, LV_PART_MAIN);
@@ -150,8 +169,8 @@ void GameActiveScreen::create_widgets() {
     lv_obj_center(reset_label);
 
     menu_item_poweroff_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_poweroff_, 280, 90);
-    lv_obj_align(menu_item_poweroff_, LV_ALIGN_TOP_MID, 0, 183);
+    lv_obj_set_size(menu_item_poweroff_, 280, 50);
+    lv_obj_align(menu_item_poweroff_, LV_ALIGN_TOP_MID, 0, 225);
     lv_obj_set_style_bg_color(menu_item_poweroff_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_poweroff_, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(menu_item_poweroff_, 0, LV_PART_MAIN);
@@ -182,10 +201,12 @@ void GameActiveScreen::destroy_widgets() {
 
     // Delete menu overlay (deletes all menu children automatically)
     if (menu_overlay_) { lv_obj_del(menu_overlay_); menu_overlay_ = nullptr; }
-    menu_paused_note_ = nullptr;
+    menu_paused_label_ = nullptr;
+    menu_timers_label_ = nullptr;
     menu_item_resume_ = nullptr;
     menu_item_skip_ = nullptr;
     menu_item_volume_ = nullptr;
+    menu_item_logs_ = nullptr;
     menu_item_reset_ = nullptr;
     menu_item_poweroff_ = nullptr;
 }
@@ -201,6 +222,7 @@ void GameActiveScreen::on_enter() {
     lv_obj_add_event_cb(menu_item_reset_, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(menu_item_skip_, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(menu_item_volume_, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(menu_item_logs_, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(menu_item_poweroff_, menu_item_clicked_cb, LV_EVENT_CLICKED, this);
 
     // Update displays with initial values
@@ -211,6 +233,9 @@ void GameActiveScreen::on_enter() {
     // Reset state
     paused_ = false;
     menu_selection_ = 0;
+
+    // Start game timer
+    GameState::instance().start_game_timer();
 
     ESP_LOGI(kLogTag, "Game started: Round %d, SB=%d, BB=%d, Time=%ds",
              GameState::instance().current_round(),
@@ -252,6 +277,7 @@ void GameActiveScreen::handle_button_click() {
     } else {
         // Show menu and pause
         paused_ = true;
+        GameState::instance().pause_game_timer();
         show_menu();
         // D6 → A6 arpeggio (retro menu open)
         play_tone(1175.0f, 50);  // D6
@@ -275,6 +301,9 @@ void GameActiveScreen::tick() {
     last_tick_ms_ = now_ms;
 
     auto& game = GameState::instance();
+
+    // Increment game timer
+    game.tick_game_timer();
 
     if (game.seconds_remaining() > 0) {
         int new_seconds = game.decrement_seconds();
@@ -316,6 +345,7 @@ void GameActiveScreen::advance_round() {
 
     // Increment round
     game.set_current_round(game.current_round() + 1);
+    game.record_max_round(game.current_round());
 
     // Store previous blind for minimum increase check
     int prev_small_blind = game.small_blind();
@@ -352,6 +382,9 @@ void GameActiveScreen::advance_round() {
 
     // Play transition tones
     play_round_transition_tones();
+
+    // Auto-save game log after each round
+    storage::GameLog::instance().save_current_game();
 }
 
 void GameActiveScreen::play_round_transition_tones() {
@@ -374,11 +407,12 @@ void GameActiveScreen::hide_menu() {
 
 void GameActiveScreen::update_menu_selection() {
     // Update menu item styles based on selection
-    // Order: Resume, Skip, Volume, New Game, Power Off
+    // Order: Resume, Skip, Volume, Logs, New Game, Power Off
     lv_obj_t* items[] = {
         menu_item_resume_,
         menu_item_skip_,
         menu_item_volume_,
+        menu_item_logs_,
         menu_item_reset_,
         menu_item_poweroff_
     };
@@ -395,6 +429,7 @@ void GameActiveScreen::update_menu_selection() {
         resume_label,
         skip_label,
         "Volume",
+        "Game Logs",
         "New Game",
         "Power Off"
     };
@@ -425,9 +460,39 @@ void GameActiveScreen::update_menu_selection() {
 
 void GameActiveScreen::update_paused_note() {
     auto& game = GameState::instance();
-    int mins = game.seconds_remaining() / 60;
-    int secs = game.seconds_remaining() % 60;
-    lv_label_set_text_fmt(menu_paused_note_, "Paused %02d:%02d", mins, secs);
+
+    // Line 1: "Paused M:SS" (round time remaining - static)
+    int round_mins = game.seconds_remaining() / 60;
+    int round_secs = game.seconds_remaining() % 60;
+    lv_label_set_text_fmt(menu_paused_label_, "Paused %d:%02d", round_mins, round_secs);
+
+    // Line 2: "Game: M:SS    Paused: M:SS" (both count up)
+    uint32_t game_secs = game.total_game_seconds();
+    int g_hours = game_secs / 3600;
+    int g_mins = (game_secs % 3600) / 60;
+    int g_secs = game_secs % 60;
+
+    uint32_t paused_secs = game.total_paused_seconds();
+    int p_hours = paused_secs / 3600;
+    int p_mins = (paused_secs % 3600) / 60;
+    int p_secs = paused_secs % 60;
+
+    char game_time_str[16];
+    char paused_time_str[16];
+
+    if (g_hours > 0) {
+        snprintf(game_time_str, sizeof(game_time_str), "%d:%02d:%02d", g_hours, g_mins, g_secs);
+    } else {
+        snprintf(game_time_str, sizeof(game_time_str), "%d:%02d", g_mins, g_secs);
+    }
+
+    if (p_hours > 0) {
+        snprintf(paused_time_str, sizeof(paused_time_str), "%d:%02d:%02d", p_hours, p_mins, p_secs);
+    } else {
+        snprintf(paused_time_str, sizeof(paused_time_str), "%d:%02d", p_mins, p_secs);
+    }
+
+    lv_label_set_text_fmt(menu_timers_label_, "Game: %s    Paused: %s", game_time_str, paused_time_str);
 }
 
 void GameActiveScreen::execute_menu_action() {
@@ -440,6 +505,7 @@ void GameActiveScreen::execute_menu_action() {
             play_tone(1760.0f, 40);
             M5.delay(30);
             play_tone(1397.0f, 60);
+            GameState::instance().resume_game_timer();
             paused_ = false;
             hide_menu();
             break;
@@ -465,7 +531,20 @@ void GameActiveScreen::execute_menu_action() {
             ScreenManager::instance().transition_to(&VolumeScreen::instance());
             break;
 
-        case 3:  // New Game
+        case 3:  // Game Logs
+            ESP_LOGI(kLogTag, "Opening game logs screen");
+            // C7 → E7 → G7 arpeggio (action executed)
+            play_tone(2093.0f, 50);  // C7
+            M5.delay(40);
+            play_tone(2637.0f, 50);  // E7
+            M5.delay(40);
+            play_tone(2960.0f, 70);  // G7
+            paused_ = false;
+            hide_menu();
+            ScreenManager::instance().transition_to(&GameLogsScreen::instance());
+            break;
+
+        case 4:  // New Game
             ESP_LOGI(kLogTag, "Resetting to small blind screen");
             // C7 → E7 → G7 arpeggio (action executed)
             play_tone(2093.0f, 50);  // C7
@@ -477,8 +556,10 @@ void GameActiveScreen::execute_menu_action() {
             ScreenManager::instance().transition_to(&SmallBlindScreen::instance());
             break;
 
-        case 4:  // Power Off
+        case 5:  // Power Off
             ESP_LOGI(kLogTag, "Powering off");
+            // Save game log before powering off
+            storage::GameLog::instance().save_current_game();
             M5.Power.powerOff();
             break;
     }
@@ -488,6 +569,7 @@ void GameActiveScreen::bottom_button_bg_clicked_cb(lv_event_t* e) {
     GameActiveScreen* screen = static_cast<GameActiveScreen*>(lv_event_get_user_data(e));
     if (screen && !screen->paused_) {
         screen->paused_ = true;
+        GameState::instance().pause_game_timer();
         screen->show_menu();
         // D6 → A6 arpeggio (retro menu open)
         screen->play_tone(1175.0f, 50);  // D6
@@ -505,11 +587,12 @@ void GameActiveScreen::menu_item_clicked_cb(lv_event_t* e) {
     lv_obj_t* clicked_item = static_cast<lv_obj_t*>(lv_event_get_target(e));
 
     // Determine which menu item was clicked
-    // Order: Resume, Skip, Volume, New Game, Power Off
+    // Order: Resume, Skip, Volume, Logs, New Game, Power Off
     lv_obj_t* items[] = {
         screen->menu_item_resume_,
         screen->menu_item_skip_,
         screen->menu_item_volume_,
+        screen->menu_item_logs_,
         screen->menu_item_reset_,
         screen->menu_item_poweroff_
     };

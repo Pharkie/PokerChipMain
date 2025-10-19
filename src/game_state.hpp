@@ -23,6 +23,12 @@ public:
     int current_round() const { return current_round_; }
     int seconds_remaining() const { return seconds_remaining_; }
 
+    // Game timer getters
+    uint32_t total_game_seconds() const { return total_game_seconds_; }
+    uint32_t total_paused_seconds() const { return total_paused_seconds_; }
+    uint32_t total_overall_seconds() const { return total_game_seconds_ + total_paused_seconds_; }
+    int max_round_reached() const { return max_round_reached_; }
+
     // Configuration setters with validation
     /// Set small blind value (automatically updates big blind to 2x)
     /// @param value Small blind amount (must be positive)
@@ -53,6 +59,23 @@ public:
     /// @param new_small_blind New small blind value
     void update_blinds(int new_small_blind);
 
+    // Game timer control
+    /// Start/reset game timer (called when round 1 begins)
+    void start_game_timer();
+
+    /// Increment game time by 1 second (called every tick during active play)
+    void tick_game_timer();
+
+    /// Record pause start time (called when pausing)
+    void pause_game_timer();
+
+    /// Accumulate paused time and resume (called when unpausing)
+    void resume_game_timer();
+
+    /// Update max round if current round is higher
+    /// @param round Current round number
+    void record_max_round(int round);
+
 private:
     GameState() = default;
     GameState(const GameState&) = delete;
@@ -67,4 +90,10 @@ private:
     // Active game state
     int current_round_ = 1;
     int seconds_remaining_ = 0;
+
+    // Game session timing
+    uint32_t total_game_seconds_ = 0;    // In-game time (playing)
+    uint32_t total_paused_seconds_ = 0;  // Time spent paused
+    uint32_t pause_start_ms_ = 0;        // Timestamp when pause started (0 if not paused)
+    int max_round_reached_ = 1;          // Highest round number achieved
 };

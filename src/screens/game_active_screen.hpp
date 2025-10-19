@@ -39,20 +39,22 @@ private:
 
     // Widget handles - menu overlay
     lv_obj_t* menu_overlay_ = nullptr;
-    lv_obj_t* menu_paused_note_ = nullptr;
+    lv_obj_t* menu_paused_label_ = nullptr;        // "Paused M:SS" (round time)
+    lv_obj_t* menu_timers_label_ = nullptr;        // "Game: M:SS    Paused: M:SS"
     lv_obj_t* menu_item_resume_ = nullptr;
     lv_obj_t* menu_item_skip_ = nullptr;
     lv_obj_t* menu_item_volume_ = nullptr;
+    lv_obj_t* menu_item_logs_ = nullptr;
     lv_obj_t* menu_item_reset_ = nullptr;
     lv_obj_t* menu_item_poweroff_ = nullptr;
 
     uint32_t last_tick_ms_ = 0;
     bool paused_ = false;
-    int menu_selection_ = 0;  // 0=Resume, 1=Skip, 2=Volume, 3=NewGame, 4=PowerOff
+    int menu_selection_ = 0;  // 0=Resume, 1=Skip, 2=Volume, 3=Logs, 4=NewGame, 5=PowerOff
 
     static constexpr uint32_t kTickIntervalMs = 1000;  // 1 second
     static constexpr int kMaxBlind = 9999;             // Failsafe
-    static constexpr int kMenuItemCount = 5;
+    static constexpr int kMenuItemCount = 6;
     static constexpr int kPowerOffLabelYOffset = -20;  // Y offset for power off label
 
     void update_timer_display();
