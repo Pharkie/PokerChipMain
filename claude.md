@@ -127,12 +127,18 @@ src/
 │   ├── small_blind_screen.hpp/cpp    # Config screen 1
 │   ├── round_minutes_screen.hpp/cpp  # Config screen 2
 │   ├── blind_progression_screen.hpp/cpp  # Config screen 3
-│   └── game_active_screen.hpp/cpp    # Active game timer
+│   ├── game_active_screen.hpp/cpp    # Active game timer
+│   ├── volume_screen.hpp/cpp         # Volume adjustment screen
+│   └── game_logs_screen.hpp/cpp      # Game history viewer
+├── storage/                          # Persistent storage
+│   ├── game_log.hpp/cpp              # NVS-based game logging (50 game ring buffer)
 ├── ui/
 │   ├── ui_root.cpp                   # Widget initialization and groups
 │   ├── ui_root.hpp                   # Widget handles and group management
 │   ├── ui_assets.cpp                 # Asset loading (images, fonts)
-│   └── ui_assets.hpp
+│   ├── ui_assets.hpp
+│   ├── ui_helpers.hpp/cpp            # UI helper functions (button creation)
+│   └── ui_styles.hpp/cpp             # Reusable LVGL styles
 ├── input/
 │   └── encoder_input.cpp             # Rotary encoder → LVGL integration
 ├── game_state.hpp/cpp                # Encapsulated game state singleton
@@ -154,26 +160,41 @@ src/
   - ScreenManager singleton for screen transitions
   - GameState singleton with encapsulated fields and validation
   - Widget group system for declarative UI management
-- **Small Blind Screen**:
-  - Rotary encoder adjusts value (25-200 in steps of 25)
+- **Configuration Screens**:
+  - Small Blind: 25-200 in steps of 25, rotary encoder control
+  - Round Minutes: 5-45 minutes in steps of 5
+  - Blind Progression: Standard/Turbo/Relaxed modes with time estimates
   - Sound feedback: A7 (up), F7 (down), G#6 (boundary)
-  - Large 48pt centered number display
-  - Transitions to Round Minutes screen on button press
-- **Round Minutes Screen**:
-  - Rotary encoder adjusts value (5-45 minutes in steps of 5)
-  - Same UI pattern as Small Blind screen
-  - Transitions to Active Game screen on button press
 - **Active Game Timer**:
   - Countdown timer with 1-second tick updates
   - Round number, small blind, big blind display (48pt font)
-  - Automatic blind doubling when timer expires
-  - Musical tone sequence on round transitions
-  - Pause menu system with touch and rotary+button controls
+  - Automatic blind progression based on selected mode
+  - Musical tone sequence on round transitions (C7→D#7→G7→A7)
+  - Tracks in-game time vs paused time separately
+  - Maximum round reached tracking
 - **Pause Menu System**:
-  - Tap menu button or press Button A to pause
-  - 5 menu items: Resume, Reset, Skip Round, Settings (placeholder), Power Off
+  - 6 menu items: Resume, Skip Round, Volume, Game Logs, New Game, Power Off
+  - Equal 30px heights with visual dividing lines (1px dark gray borders)
+  - 60px timer display area at top showing:
+    - "Paused M:SS" (round time remaining, static)
+    - "Game: M:SS    Paused: M:SS" (both update live every second)
   - Navigate with rotary encoder or tap menu items directly
-  - Resume/skip round functionality, reset to config screen
+  - Time format: M:SS when <60 mins, H:MM:SS when ≥60 mins
+- **Volume Screen**:
+  - Adjust speaker volume 0-255
+  - Real-time audio feedback with test tones
+  - Persistent volume setting
+- **Game Logging System**:
+  - NVS storage with 50-game ring buffer
+  - Saves: game number, in-game time, paused time, max round reached
+  - Auto-save after each round AND on power-off
+  - Sequential game numbering (#1, #2, #3...)
+- **Game Logs Viewer**:
+  - Displays up to 5 games per page
+  - Page-based navigation (not individual items)
+  - Shows only valid games (filters out empty records)
+  - Page indicators (e.g., "Game Logs 1/10")
+  - Format: "#N: M:SS / M:SS RX" (game time / paused time, max round)
 - **Button A**:
   - 100ms debounced GPIO polling (replaces broken M5.BtnA API)
   - Short press (<2s) opens pause menu
@@ -182,14 +203,11 @@ src/
   - Optimized for 240x240 circular display
   - Menu button centered at bottom for visibility
   - Proper spacing for 48pt fonts
-- **Info Overlay System**:
-  - Tap "i" button to view upcoming blind schedule
-  - Modal overlay blocks underlying screen interactions
-  - Close button positioned at (130, 20) for visibility
+  - Balanced pause menu layout with equal-height items
 
 ### ⚠️ Known Limitations
-- Settings menu item is placeholder (not implemented)
-- No persistent storage (configuration resets on power cycle)
+- Configuration not persisted (resets on power cycle - only game logs saved)
+- Blind progression formula is approximate (uses logarithmic growth estimation)
 
 ## Key Configuration Constants
 

@@ -91,17 +91,32 @@ void GameLogsScreen::handle_encoder(int diff) {
         return;
     }
 
-    int prev_offset = scroll_offset_;
-    scroll_offset_ += diff;
+    // Calculate total pages needed for current record count
+    int total_pages = (record_count_ + kVisibleGames - 1) / kVisibleGames;
 
-    // Clamp scroll offset
+    // If all records fit on one page, don't allow scrolling
+    if (total_pages <= 1) {
+        play_tone(kToneBoundary, kToneDuration);
+        return;
+    }
+
+    int prev_offset = scroll_offset_;
+
+    // Scroll by full pages (kVisibleGames items at a time)
+    int page_step = (diff > 0) ? kVisibleGames : -kVisibleGames;
+    scroll_offset_ += page_step;
+
+    // Clamp scroll offset to valid pages only
     if (scroll_offset_ < 0) {
         scroll_offset_ = 0;
         play_tone(kToneBoundary, kToneDuration);
-    } else if (scroll_offset_ + kVisibleGames > record_count_) {
-        scroll_offset_ = record_count_ - kVisibleGames;
-        if (scroll_offset_ < 0) scroll_offset_ = 0;
-        play_tone(kToneBoundary, kToneDuration);
+    } else {
+        // Maximum offset is (total_pages - 1) * kVisibleGames
+        int max_offset = (total_pages - 1) * kVisibleGames;
+        if (scroll_offset_ > max_offset) {
+            scroll_offset_ = max_offset;
+            play_tone(kToneBoundary, kToneDuration);
+        }
     }
 
     if (scroll_offset_ != prev_offset) {
@@ -123,8 +138,18 @@ void GameLogsScreen::handle_button_click() {
 }
 
 void GameLogsScreen::load_records() {
-    record_count_ = storage::GameLog::instance().load_games(records_, 50);
-    ESP_LOGI(kLogTag, "Loaded %d game records", record_count_);
+    storage::GameRecord temp_records[50];
+    int raw_count = storage::GameLog::instance().load_games(temp_records, 50);
+
+    // Filter out invalid records (game_number == 0) and compact array
+    record_count_ = 0;
+    for (int i = 0; i < raw_count; i++) {
+        if (temp_records[i].game_number > 0) {
+            records_[record_count_++] = temp_records[i];
+        }
+    }
+
+    ESP_LOGI(kLogTag, "Loaded %d valid game records (from %d total)", record_count_, raw_count);
 }
 
 void GameLogsScreen::update_display() {
@@ -134,8 +159,19 @@ void GameLogsScreen::update_display() {
         for (int i = 1; i < kVisibleGames; i++) {
             lv_label_set_text(log_labels_[i], "");
         }
+        // Update title to show no pages
+        lv_label_set_text(title_, "Game Logs");
         return;
     }
+
+    // Calculate page numbers
+    int total_pages = (record_count_ + kVisibleGames - 1) / kVisibleGames;
+    int current_page = (scroll_offset_ / kVisibleGames) + 1;
+
+    // Update title with page numbers
+    char title_text[32];
+    snprintf(title_text, sizeof(title_text), "Game Logs %d/%d", current_page, total_pages);
+    lv_label_set_text(title_, title_text);
 
     // Display games in reverse order (most recent first)
     for (int i = 0; i < kVisibleGames; i++) {
@@ -178,6 +214,7 @@ void GameLogsScreen::update_display() {
 
             lv_label_set_text(log_labels_[i], label_text);
         } else {
+            // Hide empty rows instead of showing zeros
             lv_label_set_text(log_labels_[i], "");
         }
     }

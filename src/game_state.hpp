@@ -28,6 +28,7 @@ public:
     uint32_t total_paused_seconds() const { return total_paused_seconds_; }
     uint32_t total_overall_seconds() const { return total_game_seconds_ + total_paused_seconds_; }
     int max_round_reached() const { return max_round_reached_; }
+    uint32_t pause_start_ms() const { return pause_start_ms_; }
 
     // Configuration setters with validation
     /// Set small blind value (automatically updates big blind to 2x)

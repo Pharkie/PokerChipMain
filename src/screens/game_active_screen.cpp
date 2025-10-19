@@ -104,7 +104,7 @@ void GameActiveScreen::create_widgets() {
     ui::styles::apply_overlay_bg(menu_overlay_);
     lv_obj_set_pos(menu_overlay_, 0, 0);
 
-    // 2-line pause status display
+    // 2-line pause status display (60px total height for better visibility)
     menu_paused_label_ = lv_label_create(menu_overlay_);
     lv_label_set_text(menu_paused_label_, "Paused 0:00");
     lv_obj_set_style_text_color(menu_paused_label_, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
@@ -117,67 +117,84 @@ void GameActiveScreen::create_widgets() {
     lv_obj_set_style_text_align(menu_timers_label_, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(menu_timers_label_, LV_ALIGN_TOP_MID, 0, 38);
 
-    // Menu items (compact spacing)
+    // Menu items - equal 30px height for all items with dividing lines
+    // Timer area: 0-60, Menu area: 60-240 (180px for 6 items = 30px each)
+    // Y positions: 60, 90, 120, 150, 180, 210
     menu_item_resume_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_resume_, 280, 28);
-    lv_obj_align(menu_item_resume_, LV_ALIGN_TOP_MID, 0, 65);
+    lv_obj_set_size(menu_item_resume_, 240, 30);
+    lv_obj_align(menu_item_resume_, LV_ALIGN_TOP_MID, 0, 60);
     lv_obj_set_style_bg_color(menu_item_resume_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_resume_, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(menu_item_resume_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_resume_, 1, LV_PART_MAIN);
+    lv_obj_set_style_border_color(menu_item_resume_, lv_color_hex(0x333333), LV_PART_MAIN);
+    lv_obj_set_style_border_side(menu_item_resume_, LV_BORDER_SIDE_BOTTOM, LV_PART_MAIN);
     lv_obj_t* resume_label = lv_label_create(menu_item_resume_);
     lv_label_set_text(resume_label, "Resume");
+    lv_obj_set_style_text_align(resume_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_center(resume_label);
 
     menu_item_skip_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_skip_, 280, 28);
-    lv_obj_align(menu_item_skip_, LV_ALIGN_TOP_MID, 0, 97);
+    lv_obj_set_size(menu_item_skip_, 240, 30);
+    lv_obj_align(menu_item_skip_, LV_ALIGN_TOP_MID, 0, 90);
     lv_obj_set_style_bg_color(menu_item_skip_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_skip_, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(menu_item_skip_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_skip_, 1, LV_PART_MAIN);
+    lv_obj_set_style_border_color(menu_item_skip_, lv_color_hex(0x333333), LV_PART_MAIN);
+    lv_obj_set_style_border_side(menu_item_skip_, LV_BORDER_SIDE_BOTTOM, LV_PART_MAIN);
     lv_obj_t* skip_label = lv_label_create(menu_item_skip_);
     lv_label_set_text(skip_label, "Skip Round");
+    lv_obj_set_style_text_align(skip_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_center(skip_label);
 
     menu_item_volume_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_volume_, 280, 28);
-    lv_obj_align(menu_item_volume_, LV_ALIGN_TOP_MID, 0, 129);
+    lv_obj_set_size(menu_item_volume_, 240, 30);
+    lv_obj_align(menu_item_volume_, LV_ALIGN_TOP_MID, 0, 120);
     lv_obj_set_style_bg_color(menu_item_volume_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_volume_, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(menu_item_volume_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_volume_, 1, LV_PART_MAIN);
+    lv_obj_set_style_border_color(menu_item_volume_, lv_color_hex(0x333333), LV_PART_MAIN);
+    lv_obj_set_style_border_side(menu_item_volume_, LV_BORDER_SIDE_BOTTOM, LV_PART_MAIN);
     lv_obj_t* volume_label = lv_label_create(menu_item_volume_);
     lv_label_set_text(volume_label, "Volume");
+    lv_obj_set_style_text_align(volume_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_center(volume_label);
 
     menu_item_logs_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_logs_, 280, 28);
-    lv_obj_align(menu_item_logs_, LV_ALIGN_TOP_MID, 0, 161);
+    lv_obj_set_size(menu_item_logs_, 240, 30);
+    lv_obj_align(menu_item_logs_, LV_ALIGN_TOP_MID, 0, 150);
     lv_obj_set_style_bg_color(menu_item_logs_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_logs_, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(menu_item_logs_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_logs_, 1, LV_PART_MAIN);
+    lv_obj_set_style_border_color(menu_item_logs_, lv_color_hex(0x333333), LV_PART_MAIN);
+    lv_obj_set_style_border_side(menu_item_logs_, LV_BORDER_SIDE_BOTTOM, LV_PART_MAIN);
     lv_obj_t* logs_label = lv_label_create(menu_item_logs_);
     lv_label_set_text(logs_label, "Game Logs");
+    lv_obj_set_style_text_align(logs_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_center(logs_label);
 
     menu_item_reset_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_reset_, 280, 28);
-    lv_obj_align(menu_item_reset_, LV_ALIGN_TOP_MID, 0, 193);
+    lv_obj_set_size(menu_item_reset_, 240, 30);
+    lv_obj_align(menu_item_reset_, LV_ALIGN_TOP_MID, 0, 180);
     lv_obj_set_style_bg_color(menu_item_reset_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_reset_, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(menu_item_reset_, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(menu_item_reset_, 1, LV_PART_MAIN);
+    lv_obj_set_style_border_color(menu_item_reset_, lv_color_hex(0x333333), LV_PART_MAIN);
+    lv_obj_set_style_border_side(menu_item_reset_, LV_BORDER_SIDE_BOTTOM, LV_PART_MAIN);
     lv_obj_t* reset_label = lv_label_create(menu_item_reset_);
     lv_label_set_text(reset_label, "New Game");
+    lv_obj_set_style_text_align(reset_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_center(reset_label);
 
     menu_item_poweroff_ = ui::helpers::create_button(menu_overlay_);
-    lv_obj_set_size(menu_item_poweroff_, 280, 50);
-    lv_obj_align(menu_item_poweroff_, LV_ALIGN_TOP_MID, 0, 225);
+    lv_obj_set_size(menu_item_poweroff_, 240, 30);
+    lv_obj_align(menu_item_poweroff_, LV_ALIGN_TOP_MID, 0, 210);
     lv_obj_set_style_bg_color(menu_item_poweroff_, lv_color_hex(0x555555), LV_PART_MAIN);
     lv_obj_set_style_radius(menu_item_poweroff_, 0, LV_PART_MAIN);
     lv_obj_set_style_border_width(menu_item_poweroff_, 0, LV_PART_MAIN);
     lv_obj_t* poweroff_label = lv_label_create(menu_item_poweroff_);
     lv_label_set_text(poweroff_label, "Power Off");
     lv_obj_set_style_text_align(poweroff_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-    lv_obj_align(poweroff_label, LV_ALIGN_CENTER, 0, kPowerOffLabelYOffset);
+    lv_obj_center(poweroff_label);
 
     // Hide menu initially
     lv_obj_add_flag(menu_overlay_, LV_OBJ_FLAG_HIDDEN);
@@ -287,10 +304,6 @@ void GameActiveScreen::handle_button_click() {
 }
 
 void GameActiveScreen::tick() {
-    if (paused_) {
-        return;  // Don't tick timer when paused
-    }
-
     uint32_t now_ms = M5.millis();
 
     // Check if 1 second has elapsed
@@ -301,6 +314,12 @@ void GameActiveScreen::tick() {
     last_tick_ms_ = now_ms;
 
     auto& game = GameState::instance();
+
+    if (paused_) {
+        // When paused, update pause menu display every second
+        update_paused_note();
+        return;
+    }
 
     // Increment game timer
     game.tick_game_timer();
@@ -442,12 +461,8 @@ void GameActiveScreen::update_menu_selection() {
         // Update label text
         lv_label_set_text(label, labels[i]);
 
-        // Re-center after text change (except power off which has custom position)
-        if (i == 4) {
-            lv_obj_align(label, LV_ALIGN_CENTER, 0, kPowerOffLabelYOffset);
-        } else {
-            lv_obj_center(label);
-        }
+        // Re-center after text change
+        lv_obj_center(label);
 
         // Update colors based on selection
         if (i == menu_selection_) {
@@ -466,16 +481,21 @@ void GameActiveScreen::update_paused_note() {
     int round_secs = game.seconds_remaining() % 60;
     lv_label_set_text_fmt(menu_paused_label_, "Paused %d:%02d", round_mins, round_secs);
 
-    // Line 2: "Game: M:SS    Paused: M:SS" (both count up)
+    // Line 2: "Game: M:SS    Paused: M:SS" (both count up in real-time)
     uint32_t game_secs = game.total_game_seconds();
     int g_hours = game_secs / 3600;
     int g_mins = (game_secs % 3600) / 60;
     int g_secs = game_secs % 60;
 
-    uint32_t paused_secs = game.total_paused_seconds();
-    int p_hours = paused_secs / 3600;
-    int p_mins = (paused_secs % 3600) / 60;
-    int p_secs = paused_secs % 60;
+    // Calculate current paused time (base + current pause duration)
+    uint32_t current_paused_secs = game.total_paused_seconds();
+    if (game.pause_start_ms() != 0) {
+        uint32_t pause_duration_ms = M5.millis() - game.pause_start_ms();
+        current_paused_secs += pause_duration_ms / 1000;
+    }
+    int p_hours = current_paused_secs / 3600;
+    int p_mins = (current_paused_secs % 3600) / 60;
+    int p_secs = current_paused_secs % 60;
 
     char game_time_str[16];
     char paused_time_str[16];
